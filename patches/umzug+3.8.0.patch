@@ -1,0 +1,15 @@
+diff --git a/node_modules/umzug/lib/storage/sequelize.js b/node_modules/umzug/lib/storage/sequelize.js
+index 8a78970..f03ce83 100644
+--- a/node_modules/umzug/lib/storage/sequelize.js
++++ b/node_modules/umzug/lib/storage/sequelize.js
+@@ -44,8 +44,8 @@ class SequelizeStorage {
+             tableName: this.tableName,
+             schema: this.schema,
+             timestamps: this.timestamps,
+-            charset: hasCharsetAndCollate ? 'utf8' : null,
+-            collate: hasCharsetAndCollate ? 'utf8_unicode_ci' : null,
++            charset: hasCharsetAndCollate ? 'utf8' : undefined,
++            collate: hasCharsetAndCollate ? 'utf8_unicode_ci' : undefined,
+         });
+     }
+     async syncModel() {

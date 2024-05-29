@@ -1,0 +1,29 @@
+{
+  "name": "list-mailer",
+  "version": "1.0.0",
+  "description": "Online mailer",
+  "scripts": {
+    "build:client": "esbuild src/index.js --bundle --outfile=dist/bundle.js --loader:.js=jsx",
+    "build:server": "esbuild server/server.jsx --bundle --outfile=build/server.js --platform=node",
+    "build": "npm run build:client && npm run build:server",
+    "start": "node ./build/server.js",
+    "dev": "node server/server.js",
+    "migrate:up": "node ./database/migrate.js up",
+    "migrate:down": "node ./database/migrate.js down",
+    "migrate:down:all": "node ./database/migrate.js down --to 0 ",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.40",
+    "@sequelize/postgres": "^7.0.0-alpha.40",
+    "dotenv": "^16.4.5",
+    "esbuild": "^0.21.4",
+    "express": "^4.19.2",
+    "patch-package": "^8.0.0",
+    "prettier": "^3.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "umzug": "^3.8.0"
+  },
+  "type": "module"
+}
