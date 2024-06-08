@@ -33,7 +33,7 @@ const Header = ({ open, handleDrawerToggle }) => {
 						color: "text.primary",
 						bgcolor: open ? iconBackColorOpen : iconBackColor,
 						ml: { xs: 0, lg: !open ? 6 : -2 },
-						transition: "margin-left 0.3s",
+						transition: "margin-left 0.25s",
 					}}
 				>
 					{!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
