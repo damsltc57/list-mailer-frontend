@@ -32,6 +32,16 @@ export const contactApi = api.injectEndpoints({
 				};
 			},
 		}),
+		updateContact: build.mutation({
+			query: (args) => {
+				return {
+					method: "POST",
+					url: `/contact/update`,
+					headers: {},
+					body: args,
+				};
+			},
+		}),
 		getContactList: build.query({
 			query: () => {
 				return {
@@ -41,8 +51,21 @@ export const contactApi = api.injectEndpoints({
 				};
 			},
 		}),
+		importContacts: build.mutation({
+			query: ({ file }) => {
+				const body = new FormData();
+				body.append("file", file);
+				return {
+					method: "POST",
+					url: "/contact/import",
+					headers: {},
+					body,
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
 
-export const { useCreateContactMutation, useGetContactListQuery } = contactApi;
+export const { useCreateContactMutation, useGetContactListQuery, useImportContactsMutation, useUpdateContactMutation } =
+	contactApi;

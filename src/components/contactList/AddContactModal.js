@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import MainCard from "../MainCard";
 import TextField from "@mui/material/TextField";
-import { useCreateContactMutation } from "../../store/api/contact";
+import { useCreateContactMutation, useUpdateContactMutation } from "../../store/api/contact";
 import { red } from "@mui/material/colors";
 import { useSnackbar } from "notistack";
 
@@ -32,13 +32,15 @@ const modalStyle = {
 	p: 4,
 };
 
-const AddContactModal = forwardRef(function AddContactModal(props, ref) {
+const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 	const [firstName, setFirstName] = React.useState("");
 	const [lastName, setLastName] = React.useState("");
 	const [email, setEmail] = React.useState("");
 	const [companyName, setCompanyName] = React.useState("");
 	const [hasError, setHasError] = React.useState(false);
 	const { enqueueSnackbar } = useSnackbar();
+
+	const [editingId, setEditingId] = React.useState(null);
 
 	const [open, setOpen] = React.useState(false);
 	const [companyCategories, setCompanyCategory] = React.useState({
@@ -51,12 +53,14 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 	const [formalityLevel, setFormalityLevel] = React.useState("");
 
 	const [createContactQuery] = useCreateContactMutation();
+	const [updateContactQuery] = useUpdateContactMutation();
 
 	const { tvProducer, filmProducer, broadcaster, distributor } = companyCategories;
 
 	const createContact = () => {
+		const query = !!editingId ? updateContactQuery : createContactQuery;
 		setHasError(false);
-		createContactQuery({
+		query({
 			firstName,
 			lastName,
 			email,
@@ -66,13 +70,17 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 			broadcaster,
 			distributor,
 			formalityLevel,
+			id: editingId,
 		})
 			.then((response) => {
 				if (response?.error) {
 					enqueueSnackbar("Il y a eu une erreur", { variant: "error" });
 					setHasError(true);
 				} else {
-					enqueueSnackbar("Le contact a été créé", { variant: "success" });
+					refetch();
+					enqueueSnackbar(!!editingId ? "Le contact a été modifié" : "Le contact a été créé", {
+						variant: "success",
+					});
 					setOpen(false);
 				}
 			})
@@ -87,7 +95,17 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 
 	React.useImperativeHandle(ref, () => {
 		return {
-			open() {
+			open(contact) {
+				if (contact) {
+					setEditingId(contact.id);
+					setFirstName(contact.firstName);
+					setLastName(contact.lastName);
+					setEmail(contact.email);
+					setCompanyName(contact.companyName);
+					setFormalityLevel(contact.formalityLevel);
+					const { tvProducer, filmProducer, broadcaster, distributor } = contact;
+					setCompanyCategory({ tvProducer, filmProducer, broadcaster, distributor });
+				}
 				setOpen(true);
 			},
 		};
@@ -117,6 +135,7 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 								id="firstName"
 								label="Prénom"
 								variant="outlined"
+								value={firstName}
 								fullWidth
 								onChange={(event) => setFirstName(event.target.value)}
 							/>
@@ -126,6 +145,7 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 								id="lastName"
 								label="Nom"
 								variant="outlined"
+								value={lastName}
 								fullWidth
 								onChange={(event) => setLastName(event.target.value)}
 							/>
@@ -135,6 +155,7 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 								id="email"
 								label="Email"
 								variant="outlined"
+								value={email}
 								fullWidth
 								onChange={(event) => setEmail(event.target.value)}
 							/>
@@ -144,6 +165,7 @@ const AddContactModal = forwardRef(function AddContactModal(props, ref) {
 								id="companyName"
 								label="Nom de la société"
 								variant="outlined"
+								value={companyName}
 								fullWidth
 								onChange={(event) => setCompanyName(event.target.value)}
 							/>
