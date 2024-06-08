@@ -20,8 +20,6 @@ const menu = createSlice({
 		},
 
 		openDrawer(state, action) {
-			console.log("Calling");
-			console.log(action);
 			state.drawerOpen = action.payload.drawerOpen;
 		},
 

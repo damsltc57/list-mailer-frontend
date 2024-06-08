@@ -1,30 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import appSections from "../../../menu-items/sections/index";
-// material-ui
-import { useTheme } from "@mui/material/styles";
-import {
-	AppBar,
-	Box,
-	Button,
-	FormControl,
-	IconButton,
-	InputLabel,
-	Menu,
-	MenuItem,
-	Select,
-	Toolbar,
-	useMediaQuery,
-} from "@mui/material";
 
-// project import
+import { useTheme } from "@mui/material/styles";
+import { AppBar, Box, IconButton, Toolbar, useMediaQuery } from "@mui/material";
+
 import AppBarStyled from "./AppBarStyled";
 import HeaderContent from "./HeaderContent";
 
-// assets
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-
-// ==============================|| MAIN LAYOUT - HEADER ||============================== //
 
 const Header = ({ open, handleDrawerToggle }) => {
 	const theme = useTheme();
@@ -46,9 +29,11 @@ const Header = ({ open, handleDrawerToggle }) => {
 					edge="start"
 					color="secondary"
 					sx={{
+						zIndex: 1305,
 						color: "text.primary",
 						bgcolor: open ? iconBackColorOpen : iconBackColor,
-						ml: { xs: 0, lg: -2 },
+						ml: { xs: 0, lg: !open ? 6 : -2 },
+						transition: "margin-left 0.3s",
 					}}
 				>
 					{!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
