@@ -1,18 +1,15 @@
-// assets
-import { DashboardOutlined } from "@ant-design/icons";
 import PersonOutlineIcon from "@mui/icons-material/Person";
-// ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
 const users = {
 	id: "group-users",
-	title: "Utilisateurs",
+	title: "Contacts",
 	type: "group",
 	children: [
 		{
 			id: "user",
-			title: "Utilisateur",
+			title: "Liste de contacts",
 			type: "item",
-			url: "boutique/user",
+			url: "/contacts",
 			icon: PersonOutlineIcon,
 			breadcrumbs: false,
 		},

@@ -1,11 +1,14 @@
 import "../style/App.css";
 import Routes from "../routes";
 import ThemeCustomization from "../themes";
+import { SnackbarProvider } from "notistack";
 
 function App() {
 	return (
 		<ThemeCustomization>
-			<Routes />
+			<SnackbarProvider maxSnack={3}>
+				<Routes />
+			</SnackbarProvider>
 		</ThemeCustomization>
 	);
 }

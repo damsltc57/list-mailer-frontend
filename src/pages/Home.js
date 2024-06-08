@@ -33,7 +33,8 @@ function App() {
 	const contactModalRef = React.useRef(null);
 
 	const onContentUpdated = ({ editor }) => {
-		console.log(editor.getHTML());
+		localStorage.setItem("draftMail", editor.getHTML());
+		// console.log(editor.getHTML());
 	};
 
 	const editor = useEditor({
@@ -48,8 +49,13 @@ function App() {
 
 	React.useEffect(() => {
 		if (signature && editor) {
-			editor.commands.setContent(`<p><br/></p><p><br/></p><p><br/></p>${signature}`);
-			editor.commands.focus("start");
+			const draft = localStorage.getItem("draftMail");
+			if (draft) {
+				editor.commands.setContent(draft);
+			} else {
+				editor.commands.setContent(`<p><br/></p><p><br/></p><p><br/></p>${signature}`);
+				editor.commands.focus("start");
+			}
 		}
 	}, [signature, editor]);
 

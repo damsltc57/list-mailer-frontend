@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useNavigation } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // material-ui
@@ -21,7 +21,7 @@ import { useLazyGetUserQuery } from "../../store/api/user";
 
 const MainLayout = ({ authenticated = false }) => {
 	const theme = useTheme();
-	const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
+	const matchDownLG = useMediaQuery(theme.breakpoints.down("lg"));
 	const dispatch = useDispatch();
 	const token = useSelector(getAuthToken);
 	const [fetchUser] = useLazyGetUserQuery();

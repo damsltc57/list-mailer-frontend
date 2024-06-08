@@ -1,38 +1,36 @@
 // types
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 // initial state
 const initialState = {
-    openItem: ['dashboard'],
-    openComponent: 'buttons',
-    drawerOpen: false,
-    componentDrawerOpen: true
+	openItem: ["dashboard"],
+	openComponent: "buttons",
+	drawerOpen: true,
+	componentDrawerOpen: true,
 };
 
 // ==============================|| SLICE - MENU ||============================== //
 
 const menu = createSlice({
-    name: 'menu',
-    initialState,
-    reducers: {
-        activeItem(state, action) {
-            state.openItem = action.payload.openItem;
-        },
+	name: "menu",
+	initialState,
+	reducers: {
+		activeComponent(state, action) {
+			state.openComponent = action.payload.openComponent;
+		},
 
-        activeComponent(state, action) {
-            state.openComponent = action.payload.openComponent;
-        },
+		openDrawer(state, action) {
+			console.log("Calling");
+			console.log(action);
+			state.drawerOpen = action.payload.drawerOpen;
+		},
 
-        openDrawer(state, action) {
-            state.drawerOpen = action.payload.drawerOpen;
-        },
-
-        openComponentDrawer(state, action) {
-            state.componentDrawerOpen = action.payload.componentDrawerOpen;
-        }
-    }
+		openComponentDrawer(state, action) {
+			state.componentDrawerOpen = action.payload.componentDrawerOpen;
+		},
+	},
 });
 
 export default menu.reducer;
 
-export const { activeItem, activeComponent, openDrawer, openComponentDrawer } = menu.actions;
+export const { activeComponent, openDrawer, openComponentDrawer } = menu.actions;

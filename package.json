@@ -27,6 +27,7 @@
     "@tiptap/starter-kit": "^2.4.0",
     "formik": "^2.4.6",
     "framer-motion": "^11.2.10",
+    "notistack": "^3.0.1",
     "prettier": "^3.3.1",
     "querystring": "^0.2.1",
     "react": "^18.3.1",

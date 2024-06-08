@@ -1,7 +1,6 @@
-import odysdee from "./odyssee";
-import boutique from "./boutique";
-import partenaires from "./partenaires";
+import mails from "./mails";
+import contacts from "./contacts";
 
-const sections = [boutique, odysdee, partenaires];
+const sections = [mails, contacts];
 
 export default sections;

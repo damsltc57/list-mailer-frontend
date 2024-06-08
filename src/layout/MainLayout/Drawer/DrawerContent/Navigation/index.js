@@ -10,6 +10,8 @@ import getMenuItem from "menu-items";
 const Navigation = () => {
 	const menuItem = getMenuItem();
 
+	console.log(menuItem);
+
 	const navGroups = menuItem.items.map((item) => {
 		switch (item.type) {
 			case "group":
