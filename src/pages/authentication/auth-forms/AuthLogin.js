@@ -23,7 +23,7 @@ import AnimateButton from "components/@extended/AnimateButton";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { useLazyGetUserTokenQuery } from "../../../store/api/user";
 import { useDispatch } from "react-redux";
-import { setAuthToken } from "../../../store/reducers/userSlice";
+import { setAuthToken, setUser } from "../../../store/reducers/userSlice";
 import { useNavigate } from "react-router-dom";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
@@ -66,7 +66,8 @@ const AuthLogin = () => {
 									return;
 								}
 								dispatch(setAuthToken(data.data?.token));
-								navigate("/boutique/process-orders");
+								dispatch(setUser(data.data?.user));
+								navigate("/");
 							})
 							.catch(() => {
 								setStatus({ success: false });

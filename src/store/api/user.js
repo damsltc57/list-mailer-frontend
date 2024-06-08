@@ -7,7 +7,7 @@ export const userApi = api.injectEndpoints({
 			query: ({ email, password }) => {
 				return {
 					method: "POST",
-					url: `/user/token`,
+					url: `/auth/login`,
 					headers: {},
 					body: {
 						email,
@@ -16,16 +16,12 @@ export const userApi = api.injectEndpoints({
 				};
 			},
 		}),
-
-		getAdmin: build.query({
-			query: ({}) => {
+		getUser: build.query({
+			query: () => {
 				return {
-					method: "POST",
-					url: `/user/get-admin`,
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					body: encode({}),
+					method: "GET",
+					url: `/auth/me`,
+					headers: {},
 				};
 			},
 		}),
@@ -33,4 +29,4 @@ export const userApi = api.injectEndpoints({
 	overrideExisting: true,
 });
 
-export const { useLazyGetUserTokenQuery, useGetAdminQuery } = userApi;
+export const { useLazyGetUserTokenQuery, useLazyGetUserQuery } = userApi;

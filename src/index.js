@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider as ReduxProvider } from "react-redux";
 import { store } from "./store";
 import { BrowserRouter } from "react-router-dom";
+import "style/tiptap.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

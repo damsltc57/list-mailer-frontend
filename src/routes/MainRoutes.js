@@ -11,7 +11,7 @@ const HomePage = Loadable(lazy(() => import("pages/Home")));
 
 const MainRoutes = {
 	path: "/",
-	element: <MainLayout authenticated={false} />,
+	element: <MainLayout authenticated={true} />,
 	children: [{ path: "/", index: true, element: <HomePage /> }],
 };
 

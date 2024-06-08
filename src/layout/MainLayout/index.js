@@ -15,6 +15,7 @@ import Breadcrumbs from "components/@extended/Breadcrumbs";
 // types
 import { openDrawer } from "store/reducers/menu";
 import { getAuthToken } from "../../store/reducers/userSlice";
+import { useLazyGetUserQuery } from "../../store/api/user";
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -23,6 +24,7 @@ const MainLayout = ({ authenticated = false }) => {
 	const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
 	const dispatch = useDispatch();
 	const token = useSelector(getAuthToken);
+	const [fetchUser] = useLazyGetUserQuery();
 
 	const navigate = useNavigate();
 	const menuItems = getMenuItem();
@@ -31,6 +33,8 @@ const MainLayout = ({ authenticated = false }) => {
 		if (authenticated) {
 			if (!token) {
 				navigate("/login");
+			} else {
+				fetchUser();
 			}
 		}
 	}, [token]);
