@@ -37,6 +37,9 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 	const [lastName, setLastName] = React.useState("");
 	const [email, setEmail] = React.useState("");
 	const [companyName, setCompanyName] = React.useState("");
+	const [country, setCountry] = React.useState("");
+	const [website, setWebsite] = React.useState("");
+	const [interesting, setInteresting] = React.useState(false);
 	const [hasError, setHasError] = React.useState(false);
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -70,6 +73,9 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 			broadcaster,
 			distributor,
 			formalityLevel,
+			interesting,
+			country,
+			website,
 			id: editingId,
 		})
 			.then((response) => {
@@ -92,6 +98,9 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 	const handleFormalityLevelChange = (event) => {
 		setFormalityLevel(event.target.value);
 	};
+	const handleCountryChange = (event) => {
+		setCountry(event.target.value);
+	};
 
 	React.useImperativeHandle(ref, () => {
 		return {
@@ -105,6 +114,9 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 					setFormalityLevel(contact.formalityLevel);
 					const { tvProducer, filmProducer, broadcaster, distributor } = contact;
 					setCompanyCategory({ tvProducer, filmProducer, broadcaster, distributor });
+					setInteresting(contact.interesting);
+					setCountry(contact.country);
+					setWebsite(contact.website);
 				}
 				setOpen(true);
 			},
@@ -116,6 +128,10 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 			...companyCategories,
 			[event.target.name]: event.target.checked,
 		});
+	};
+
+	const handleInterestingChange = (event) => {
+		setInteresting(event.target.checked);
 	};
 
 	const handleClose = () => setOpen(false);
@@ -186,6 +202,31 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 							</FormControl>
 						</Grid>
 						<Grid item xs={12}>
+							<TextField
+								id="website"
+								label="Site web"
+								variant="outlined"
+								value={website}
+								fullWidth
+								onChange={(event) => setWebsite(event.target.value)}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<FormControl fullWidth>
+								<InputLabel id="demo-simple-select-label">Pays</InputLabel>
+								<Select
+									labelId="demo-simple-select-label"
+									id="demo-simple-select"
+									value={country}
+									label="Pays"
+									onChange={handleCountryChange}
+								>
+									<MenuItem value={"france"}>France</MenuItem>
+									<MenuItem value={"belgique"}>Belgique</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+						<Grid item xs={6}>
 							<FormControl sx={{}} component="fieldset" variant="standard">
 								<FormLabel component="legend">Catégories</FormLabel>
 								<FormGroup sx={{ marginLeft: 2 }}>
@@ -224,6 +265,23 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 											/>
 										}
 										label="Distributeur"
+									/>
+								</FormGroup>
+							</FormControl>
+						</Grid>
+						<Grid item xs={6}>
+							<FormControl sx={{}} component="fieldset" variant="standard">
+								<FormLabel component="legend">Autres options</FormLabel>
+								<FormGroup sx={{ marginLeft: 2 }}>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={interesting}
+												onChange={handleInterestingChange}
+												name="interesting"
+											/>
+										}
+										label="Intéressant"
 									/>
 								</FormGroup>
 							</FormControl>

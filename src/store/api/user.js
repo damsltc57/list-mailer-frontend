@@ -25,8 +25,17 @@ export const userApi = api.injectEndpoints({
 				};
 			},
 		}),
+		getUserEmailAdresses: build.query({
+			query: () => {
+				return {
+					method: "GET",
+					url: `/mail-account/list`,
+					headers: {},
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
 
-export const { useLazyGetUserTokenQuery, useLazyGetUserQuery } = userApi;
+export const { useLazyGetUserTokenQuery, useLazyGetUserQuery, useGetUserEmailAdressesQuery } = userApi;

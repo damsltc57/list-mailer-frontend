@@ -17,7 +17,6 @@ const slice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addMatcher(userApi.endpoints.getUser.matchFulfilled, (state, { payload }) => {
-			console.log(payload);
 			if (payload?.user) {
 				state.user = payload.user;
 			}
