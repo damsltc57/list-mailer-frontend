@@ -1,13 +1,18 @@
 import React, { forwardRef } from "react";
 import { Box, Button, Modal, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import MainCard from "../MainCard";
+import ContactSelectionContent from "./ContactSelectionContent";
+import GridPreviewFinalSelectedContacts from "./GridPreviewFinalSelectedContacts";
+import { useSendEmailMutation } from "../../store/api/email";
+import { useDispatch, useSelector } from "react-redux";
+import { getSelectedContacts, resetContacts } from "../../store/reducers/contactSlice";
 
 const modalStyle = {
 	position: "absolute",
 	top: "50%",
 	left: "50%",
 	transform: "translate(-50%, -50%)",
-	width: 400,
+	width: "90%",
 	boxShadow: 24,
 	borderRadius: 10,
 	minWidth: 800,
@@ -16,9 +21,16 @@ const modalStyle = {
 
 const steps = ["Sélection des contacts", "Vérification"];
 
-const ContactSelectionModal = forwardRef(function ContactSelectionModal(props, ref) {
+const ContactSelectionModal = forwardRef(function ContactSelectionModal(
+	{ object, selectedAddress, attachments, editor, signature, setObject },
+	ref,
+) {
 	const [open, setOpen] = React.useState(false);
 	const [activeStep, setActiveStep] = React.useState(0);
+	const [sendEmailMutation] = useSendEmailMutation();
+	const selectedContacts = useSelector(getSelectedContacts);
+	const dispatch = useDispatch();
+
 	React.useImperativeHandle(ref, () => {
 		return {
 			open() {
@@ -29,7 +41,23 @@ const ContactSelectionModal = forwardRef(function ContactSelectionModal(props, r
 
 	const handleClose = () => setOpen(false);
 
+	const sendEmail = () => {
+		const content = editor.getHTML();
+		sendEmailMutation({ object, selectedAddress, attachments, content, to: selectedContacts });
+		// localStorage.removeItem("draftMail");
+		// localStorage.removeItem("draftObject");
+		// editor.commands.setContent(`<p><br/></p><p><br/></p><p><br/></p>${signature}`);
+		// dispatch(resetContacts());
+		// setObject("");
+		setActiveStep(0);
+		setOpen(false);
+	};
+
 	const handleNext = () => {
+		if (activeStep === steps.length - 1) {
+			sendEmail();
+			return;
+		}
 		setActiveStep((prevActiveStep) => prevActiveStep + 1);
 	};
 
@@ -57,14 +85,10 @@ const ContactSelectionModal = forwardRef(function ContactSelectionModal(props, r
 							);
 						})}
 					</Stepper>
-					<Typography id="modal-modal-title" variant="h6" component="h2">
-						Text in a modal
-					</Typography>
-					<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-						Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-					</Typography>
+					{activeStep === 0 && <ContactSelectionContent />}
+					{activeStep === 1 && <GridPreviewFinalSelectedContacts />}
+
 					<React.Fragment>
-						<Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
 						<Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
 							<Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
 								Précédent

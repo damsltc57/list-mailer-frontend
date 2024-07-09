@@ -8,7 +8,7 @@ import { getUserSignature } from "../store/reducers/userSlice";
 import { useSelector } from "react-redux";
 import { Image } from "@tiptap/extension-image";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import {
 	Box,
 	Button,
@@ -24,7 +24,7 @@ import {
 import ContactSelectionModal from "../components/home/ContactSelectionModal";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
-import { useGetUserEmailAdressesQuery } from "../store/api/user";
+import { useGetGoogleOauthUrlQuery, useGetUserEmailAdressesQuery } from "../store/api/user";
 import suggestion from "../components/editor/suggestion";
 import SuggestionNode from "../components/editor/extensions/variableExtension";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -105,10 +105,16 @@ function App() {
 	const { data: emails } = useGetUserEmailAdressesQuery();
 	const [selectedAddress, setSelectedAddress] = React.useState(null);
 	const [attachments, setAttachments] = React.useState([]);
+	const { data: oauthUrl } = useGetGoogleOauthUrlQuery();
 
 	const onContentUpdated = ({ editor }) => {
 		localStorage.setItem("draftMail", editor.getHTML());
 		// console.log(editor.getHTML());
+	};
+
+	const handlerOauthLogin = () => {
+		console.log(oauthUrl);
+		window.location.assign(oauthUrl);
 	};
 
 	React.useEffect(() => {
@@ -178,21 +184,28 @@ function App() {
 					/>
 				</Grid>
 				{!!selectedAddress && (
-					<Grid item xs={12}>
-						<FormControl fullWidth>
-							<InputLabel id="demo-simple-select-label">Email</InputLabel>
-							<Select
-								labelId="demo-simple-select-label"
-								id="demo-simple-select"
-								value={selectedAddress}
-								label="Email"
-								onChange={handleAddressChange}
-							>
-								{emails?.map((email) => (
-									<MenuItem value={email.id}>{email.email}</MenuItem>
-								))}
-							</Select>
-						</FormControl>
+					<Grid container item alignItems={"center"} spacing={2}>
+						<Grid item xs={11}>
+							<FormControl fullWidth>
+								<InputLabel id="demo-simple-select-label">Email</InputLabel>
+								<Select
+									labelId="demo-simple-select-label"
+									id="demo-simple-select"
+									value={selectedAddress}
+									label="Email"
+									onChange={handleAddressChange}
+								>
+									{emails?.map((email) => (
+										<MenuItem value={email.id}>{email.email}</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Grid>
+						<Grid item xs={1}>
+							<IconButton onClick={handlerOauthLogin} aria-label="delete">
+								<AddBoxIcon />
+							</IconButton>
+						</Grid>
 					</Grid>
 				)}
 				<Grid item xs={12}>
@@ -247,7 +260,15 @@ function App() {
 					</Box>
 				</Grid>
 			</Grid>
-			<ContactSelectionModal ref={contactModalRef} />
+			<ContactSelectionModal
+				ref={contactModalRef}
+				object={object}
+				selectedAddress={selectedAddress}
+				attachments={attachments}
+				editor={editor}
+				signature={signature}
+				setObject={setObject}
+			/>
 		</div>
 	);
 }

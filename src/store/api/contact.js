@@ -51,6 +51,22 @@ export const contactApi = api.injectEndpoints({
 				};
 			},
 		}),
+		findContact: build.query({
+			query: ({ categoryValue, formalityLevel, interesting, country, query }) => {
+				return {
+					method: "GET",
+					url: `/contact/find`,
+					headers: {},
+					params: {
+						categoryValue,
+						formalityLevel,
+						interesting,
+						country,
+						query,
+					},
+				};
+			},
+		}),
 		importContacts: build.mutation({
 			query: ({ file }) => {
 				const body = new FormData();
@@ -67,5 +83,10 @@ export const contactApi = api.injectEndpoints({
 	overrideExisting: true,
 });
 
-export const { useCreateContactMutation, useGetContactListQuery, useImportContactsMutation, useUpdateContactMutation } =
-	contactApi;
+export const {
+	useCreateContactMutation,
+	useGetContactListQuery,
+	useImportContactsMutation,
+	useUpdateContactMutation,
+	useFindContactQuery,
+} = contactApi;

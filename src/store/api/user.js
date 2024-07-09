@@ -34,8 +34,35 @@ export const userApi = api.injectEndpoints({
 				};
 			},
 		}),
+		getGoogleOauthUrl: build.query({
+			query: () => {
+				return {
+					method: "GET",
+					url: `/auth/google/oauth`,
+					headers: {},
+				};
+			},
+		}),
+		registerGoogleOAuth: build.mutation({
+			query: ({ code }) => {
+				return {
+					method: "POST",
+					url: `/auth/google/register`,
+					headers: {},
+					body: {
+						code,
+					},
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
 
-export const { useLazyGetUserTokenQuery, useLazyGetUserQuery, useGetUserEmailAdressesQuery } = userApi;
+export const {
+	useLazyGetUserTokenQuery,
+	useLazyGetUserQuery,
+	useGetUserEmailAdressesQuery,
+	useGetGoogleOauthUrlQuery,
+	useRegisterGoogleOAuthMutation,
+} = userApi;

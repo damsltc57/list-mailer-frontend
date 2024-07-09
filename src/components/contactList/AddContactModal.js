@@ -294,7 +294,7 @@ const AddContactModal = forwardRef(function AddContactModal({ refetch }, ref) {
 					</Grid>
 					<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
 						<Button onClick={createContact} variant={"contained"}>
-							Ajouter
+							{!!editingId ? "Modifier" : "Ajouter"}
 						</Button>
 					</Box>
 				</MainCard>
