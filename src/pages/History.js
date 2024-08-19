@@ -70,7 +70,10 @@ const History = () => {
 						<Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
 							{open?.to?.map((to) => (
 								<Card>
-									<CardContent>{to?.email}</CardContent>
+									<CardContent>
+										<Box>{to?.email}</Box>
+										<Typography color={"secondary"}>{to?.MailHistoriesContacts?.status}</Typography>
+									</CardContent>
 								</Card>
 							))}
 						</Box>
