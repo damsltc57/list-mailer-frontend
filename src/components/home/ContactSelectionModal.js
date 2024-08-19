@@ -44,6 +44,7 @@ const ContactSelectionModal = forwardRef(function ContactSelectionModal(
 	const sendEmail = () => {
 		const content = editor.getHTML();
 		sendEmailMutation({ object, selectedAddress, attachments, content, to: selectedContacts });
+		//TODO: uncomment
 		// localStorage.removeItem("draftMail");
 		// localStorage.removeItem("draftObject");
 		// editor.commands.setContent(`<p><br/></p><p><br/></p><p><br/></p>${signature}`);

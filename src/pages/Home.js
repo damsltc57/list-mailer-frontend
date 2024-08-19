@@ -170,6 +170,12 @@ function App() {
 		}
 	};
 
+	const obj = {};
+
+	for (const key of attachments) {
+		obj[key.name] = key;
+	}
+
 	return (
 		<div className="App">
 			<Grid container spacing={3}>
