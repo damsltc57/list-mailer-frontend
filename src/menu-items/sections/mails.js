@@ -13,6 +13,14 @@ const mails = {
 			icon: MailIcon,
 			breadcrumbs: false,
 		},
+		{
+			id: "history",
+			title: "Historique",
+			type: "item",
+			url: "/historique",
+			icon: MailIcon,
+			breadcrumbs: false,
+		},
 	],
 };
 

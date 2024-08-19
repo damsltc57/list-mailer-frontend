@@ -51,8 +51,6 @@ P
  src/menu-items/sections/index.js,c/b/cb44cf09c2c5cbb0c28b0d7ed80dda592a617a8f
 G
 src/menu-items/index.js,f/a/fa7f569b432ac719acbc10a2460417aae5d516a8
-P
- src/menu-items/sections/mails.js,5/7/572fec7cb15c152eaeead5071dad90083f8c581d
 S
 #src/menu-items/sections/contacts.js,6/9/6993afc7d725fe1ffe7b74f3d7606c77421ccaf4
 p
@@ -71,8 +69,6 @@ U
 %src/layout/MainLayout/Header/index.js,4/9/49e5ba46845eaebfc115cbb28ab4529898b661a3
 `
 0src/layout/MainLayout/Drawer/MiniDrawerStyled.js,7/5/753a63033f0b5f46e9de194731292e26d997c459
-J
-src/components/MainCard.js,4/1/412fbdfb8cf690e2cfa9942b2bce7e888d751ceb
 e
 5src/components/editor/extensions/variableExtension.js,e/3/e32ad66fb69336869227bb4c0994148d13700334
 A
@@ -102,3 +98,17 @@ R
 "src/components/home/ContactItem.js,3/6/36c661c8ca17818e0d2dd940063db525dca96e08
 H
 src/store/api/contact.js,9/0/90705c76170423cadd2f9400164843c0dd3be38a
+]
+-src/components/contactList/AddContactModal.js,f/d/fddefccb1f2fd1e24f23d9c411d9c4b313b8eef5
+E
+src/store/api/user.js,8/7/8799340e877c3b1b3b8ccd6841531afb12022645
+J
+src/pages/OAuthCallback.js,c/d/cd1998f5d2318fc3ef48066305801404f47acff5
+<
+src/index.js,f/9/f900edc44cb929c2267a16100a32851f6d5b477d
+^
+.src/components/home/ContactSelectionContent.js,1/8/1864a4d913535364eb1ef50cfbbc3ff06286f24f
+g
+7src/components/home/GridPreviewFinalSelectedContacts.js,2/8/285116bb03370c41b475061eea45f206265ed7bf
+R
+"src/store/reducers/contactSlice.js,d/c/dcdb17e9094714ace78b65d26e54f3fd4ed46df1
