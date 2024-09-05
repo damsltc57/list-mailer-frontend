@@ -12,6 +12,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import {
 	Box,
 	Button,
+	Divider,
 	FormControl,
 	Grid,
 	IconButton,
@@ -82,7 +83,7 @@ const extensions = [
 	Placeholder.configure({
 		placeholder: "Écrivez quelque chose...",
 	}),
-	Image,
+	Image.configure({ allowBase64: true }),
 	SuggestionNode.configure({
 		HTMLAttributes: {
 			class: "mention",
@@ -106,6 +107,10 @@ function App() {
 	const [selectedAddress, setSelectedAddress] = React.useState(null);
 	const [attachments, setAttachments] = React.useState([]);
 	const { data: oauthUrl } = useGetGoogleOauthUrlQuery();
+
+	const currentSignature = React.useMemo(() => {
+		return emails?.find((email) => email.id === selectedAddress)?.signature || "";
+	}, [selectedAddress, emails]);
 
 	const onContentUpdated = ({ editor }) => {
 		localStorage.setItem("draftMail", editor.getHTML());
@@ -142,9 +147,6 @@ function App() {
 			const draft = localStorage.getItem("draftMail");
 			if (draft) {
 				editor.commands.setContent(draft);
-			} else {
-				editor.commands.setContent(`<p><br/></p><p><br/></p><p><br/></p>${signature}`);
-				editor.commands.focus("start");
 			}
 		}
 	}, [signature, editor]);
@@ -175,6 +177,8 @@ function App() {
 	for (const key of attachments) {
 		obj[key.name] = key;
 	}
+
+	console.log(currentSignature);
 
 	return (
 		<div className="App">
@@ -217,6 +221,8 @@ function App() {
 				<Grid item xs={12}>
 					<MainCard contentSX={{ p: 2.25 }}>
 						<EditorContent editor={editor} />
+						{/*<Divider sx={{ marginBottom: 3, marginTop: 3 }} />*/}
+						<div style={{ marginTop: 10 }} dangerouslySetInnerHTML={{ __html: currentSignature }} />
 					</MainCard>
 				</Grid>
 				<Grid item xs={12}>

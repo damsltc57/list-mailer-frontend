@@ -57,8 +57,8 @@ export default {
 			},
 
 			onExit() {
-				popup[0].destroy();
-				component.destroy();
+				popup?.[0].destroy();
+				component?.destroy();
 			},
 		};
 	},
