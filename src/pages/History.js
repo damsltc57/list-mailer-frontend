@@ -24,16 +24,14 @@ const History = () => {
 		<MainCard title={"Historique"}>
 			<Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
 				{data?.map((mail) => (
-					<Card>
+					<Card sx={{ width: 300 }}>
 						<CardActionArea onClick={() => handleOpen(mail)}>
 							<CardContent>
 								<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 									{mail.object}
 								</Typography>
 								<Typography variant="h5" component="div"></Typography>
-								<Typography sx={{ mb: 1.5 }} color="text.secondary">
-									adjective
-								</Typography>
+
 								<Typography
 									variant="body2"
 									dangerouslySetInnerHTML={{ __html: mail?.content }}
@@ -43,6 +41,7 @@ const History = () => {
 										"-webkit-line-clamp": 2,
 										lineClamp: 2,
 										"-webkit-box-orient": "vertical",
+										"& > p": {},
 									}}
 								></Typography>
 							</CardContent>
