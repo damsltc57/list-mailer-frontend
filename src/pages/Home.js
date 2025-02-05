@@ -30,6 +30,8 @@ import suggestion from "../components/editor/suggestion";
 import SuggestionNode from "../components/editor/extensions/variableExtension";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { grey } from "@mui/material/colors";
+import EditIcon from "@mui/icons-material/Edit";
+import AddressesEmailInfo from "../components/home/modal/AddressesEmailInfo";
 
 const StyledTextField = styled(TextField)(({ theme }) => {
 	return {
@@ -103,10 +105,14 @@ function App() {
 	const signature = useSelector(getUserSignature);
 	const contactModalRef = React.useRef(null);
 	const [object, setObject] = React.useState(localStorage.getItem("draftObject") || "");
-	const { data: emails } = useGetUserEmailAdressesQuery();
+	const { data: emails, refetch: refetchUserList } = useGetUserEmailAdressesQuery();
 	const [selectedAddress, setSelectedAddress] = React.useState(null);
 	const [attachments, setAttachments] = React.useState([]);
 	const { data: oauthUrl } = useGetGoogleOauthUrlQuery();
+
+	const [open, setOpen] = React.useState(false);
+	const handleOpen = () => setOpen(true);
+	const handleClose = () => setOpen(false);
 
 	const currentSignature = React.useMemo(() => {
 		return emails?.find((email) => email.id === selectedAddress)?.signature || "";
@@ -178,8 +184,6 @@ function App() {
 		obj[key.name] = key;
 	}
 
-	console.log(currentSignature);
-
 	return (
 		<div className="App">
 			<Grid container spacing={3}>
@@ -212,8 +216,8 @@ function App() {
 							</FormControl>
 						</Grid>
 						<Grid item xs={1}>
-							<IconButton onClick={handlerOauthLogin} aria-label="delete">
-								<AddBoxIcon />
+							<IconButton onClick={handleOpen} aria-label="delete">
+								<EditIcon />
 							</IconButton>
 						</Grid>
 					</Grid>
@@ -280,6 +284,12 @@ function App() {
 				editor={editor}
 				signature={signature}
 				setObject={setObject}
+			/>
+			<AddressesEmailInfo
+				open={open}
+				handleClose={handleClose}
+				emails={emails}
+				refetchUserList={refetchUserList}
 			/>
 		</div>
 	);

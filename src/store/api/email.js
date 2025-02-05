@@ -24,8 +24,42 @@ export const emailApi = api.injectEndpoints({
 				};
 			},
 		}),
+		testEmail: build.query({
+			query: ({ addressId }) => {
+				return {
+					method: "GET",
+					url: `/mail-account/test/${addressId}`,
+					headers: {},
+				};
+			},
+		}),
+		updateAddressEmail: build.mutation({
+			query: ({ addressId, ...args }) => {
+				return {
+					method: "PATCH",
+					url: `/mail-account/update/${addressId}`,
+					headers: {},
+					body: args,
+				};
+			},
+		}),
+		createAddressEmail: build.mutation({
+			query: ({ ...args }) => {
+				return {
+					method: "POST",
+					url: `/mail-account/create`,
+					headers: {},
+					body: args,
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
 
-export const { useSendEmailMutation } = emailApi;
+export const {
+	useSendEmailMutation,
+	useLazyTestEmailQuery,
+	useUpdateAddressEmailMutation,
+	useCreateAddressEmailMutation,
+} = emailApi;

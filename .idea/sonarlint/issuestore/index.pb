@@ -77,8 +77,6 @@ e
 5src/components/editor/extensions/variableExtension.js,e/3/e32ad66fb69336869227bb4c0994148d13700334
 d
 4src/components/editor/Suggestions/SuggestionsList.js,3/7/37264e6f494aca18decb60d037502c34dd833a17
-S
-#src/components/editor/suggestion.js,4/7/4757c56e6272489d13909df54453dce7c40028fc
 E
 src/themes/palette.js,e/0/e02312de5c7b78555b0456a63dd0092dff5094e6
 :
@@ -112,3 +110,21 @@ g
 7src/components/home/GridPreviewFinalSelectedContacts.js,2/8/285116bb03370c41b475061eea45f206265ed7bf
 R
 "src/store/reducers/contactSlice.js,d/c/dcdb17e9094714ace78b65d26e54f3fd4ed46df1
+J
+src/components/MainCard.js,4/1/412fbdfb8cf690e2cfa9942b2bce7e888d751ceb
+\
+,src/components/home/ContactSelectionModal.js,4/5/45687f5ce5bd66c1bf8264327096547673d873a7
+P
+ src/menu-items/sections/mails.js,5/7/572fec7cb15c152eaeead5071dad90083f8c581d
+H
+src/routes/MainRoutes.js,5/9/5982be09cba9d1504757f3354acb7ba3b7368eed
+S
+#src/components/editor/suggestion.js,4/7/4757c56e6272489d13909df54453dce7c40028fc
+F
+src/store/api/email.js,b/5/b559e81e5fed60aef4efb92a00acce66fa881f12
+H
+src/store/api/history.js,b/b/bb3ecd9ad00095d2fdec561c71de3452164300e0
+D
+src/pages/History.js,f/0/f03189b88b9d796746c51737602a745526d35504
+A
+src/pages/Home.js,f/8/f88e17193d91c101c7e0bd70b2fc4123066b1147
