@@ -4,6 +4,7 @@ import React from "react";
 import EmailSettings from "./EmailSettings";
 import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
+
 const ModalContainer = styled(Box)(() => {
 	return {
 		display: "flex",

@@ -5,32 +5,24 @@ import AddContactModal from "../components/contactList/AddContactModal";
 import { useGetContactListQuery, useImportContactsMutation } from "../store/api/contact";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-
-const VisuallyHiddenInput = styled("input")({
-	clip: "rect(0 0 0 0)",
-	clipPath: "inset(50%)",
-	height: 1,
-	overflow: "hidden",
-	position: "absolute",
-	bottom: 0,
-	left: 0,
-	whiteSpace: "nowrap",
-	width: 1,
-});
+import ImportList from "../components/contactList/ImportList";
 
 const ContactList = () => {
 	const addContactRef = React.useRef(null);
+	const [modalImportOpen, setModalImportOpen] = React.useState(false);
 	const { data, refetch } = useGetContactListQuery();
-	const [importContacts] = useImportContactsMutation();
 
 	const openAddContact = (contact) => {
 		addContactRef.current?.open(contact);
 	};
 
-	const uploadFile = (files) => {
-		if (files[0]) {
-			importContacts({ file: files[0] });
-		}
+	const openModalList = () => {
+		setModalImportOpen(true);
+	};
+
+	const closeImportModal = () => {
+		console.log("Closing");
+		setModalImportOpen(false);
 	};
 
 	return (
@@ -39,19 +31,8 @@ const ContactList = () => {
 				title={"Contacts"}
 				secondary={
 					<Box sx={{ display: "flex", gap: 2 }}>
-						<Button
-							component="label"
-							role={undefined}
-							tabIndex={-1}
-							variant="contained"
-							startIcon={<CloudUploadIcon />}
-						>
-							Importer csv
-							<VisuallyHiddenInput
-								onChange={(event) => uploadFile(event.target.files)}
-								accept=".csv"
-								type="file"
-							/>
+						<Button variant="contained" onClick={openModalList}>
+							Ajouter une liste
 						</Button>
 						<Button variant="contained" onClick={openAddContact}>
 							Ajouter
@@ -94,6 +75,7 @@ const ContactList = () => {
 				</Grid>
 			</MainCard>
 			<AddContactModal ref={addContactRef} refetch={refetch} />
+			<ImportList open={modalImportOpen} handleClose={closeImportModal} refetch={refetch} />
 		</React.Fragment>
 	);
 };

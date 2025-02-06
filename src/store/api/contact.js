@@ -68,9 +68,10 @@ export const contactApi = api.injectEndpoints({
 			},
 		}),
 		importContacts: build.mutation({
-			query: ({ file }) => {
+			query: ({ file, listName }) => {
 				const body = new FormData();
 				body.append("file", file);
+				body.append("listName", listName);
 				return {
 					method: "POST",
 					url: "/contact/import",
