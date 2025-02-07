@@ -197,7 +197,7 @@ function App() {
 						onChange={onObjectUpdated}
 					/>
 				</Grid>
-				{!!selectedAddress && (
+				{!!selectedAddress ? (
 					<Grid container item alignItems={"center"} spacing={2}>
 						<Grid item xs={11}>
 							<FormControl fullWidth>
@@ -220,6 +220,12 @@ function App() {
 								<EditIcon />
 							</IconButton>
 						</Grid>
+					</Grid>
+				) : (
+					<Grid item>
+						<Button variant={"contained"} onClick={handleOpen} aria-label="delete">
+							Ajouter un e-mail
+						</Button>
 					</Grid>
 				)}
 				<Grid item xs={12}>

@@ -122,21 +122,25 @@ const EmailSettings = ({ email, refetchUserList }) => {
 			<Button onClick={updateEmail}>Sauvegarder</Button>
 			<Divider />
 			<Box sx={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
-				<Box
-					sx={{
-						display: "flex",
-						alignItems: "center",
-						flex: 1,
-						flexDirection: "column",
-						gap: 4,
-					}}
-				>
-					<Button onClick={testEmail}>Tester la connexion</Button>
-					{renderConnexionStatus}
-				</Box>
-				<Box sx={{ width: 10 }}>
-					<Divider orientation={"vertical"} />
-				</Box>
+				{!!email?.id && (
+					<React.Fragment>
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								flex: 1,
+								flexDirection: "column",
+								gap: 4,
+							}}
+						>
+							<Button onClick={testEmail}>Tester la connexion</Button>
+							{renderConnexionStatus}
+						</Box>
+						<Box sx={{ width: 10 }}>
+							<Divider orientation={"vertical"} />
+						</Box>
+					</React.Fragment>
+				)}
 				<Box>
 					<div dangerouslySetInnerHTML={{ __html: signature }} />
 				</Box>
