@@ -1,8 +1,21 @@
 import React from "react";
 import MainCard from "../components/MainCard";
-import { Box, Button, Card, CardActionArea, CardContent, Chip, Grid, Typography } from "@mui/material";
+import {
+	Box,
+	Button,
+	Card,
+	CardActionArea,
+	CardContent,
+	Chip,
+	FormControl,
+	Grid,
+	InputLabel,
+	MenuItem,
+	Select,
+	Typography,
+} from "@mui/material";
 import AddContactModal from "../components/contactList/AddContactModal";
-import { useGetContactListQuery, useImportContactsMutation } from "../store/api/contact";
+import { useGetContactListQuery, useGetContactListsQuery, useImportContactsMutation } from "../store/api/contact";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ImportList from "../components/contactList/ImportList";
@@ -10,7 +23,13 @@ import ImportList from "../components/contactList/ImportList";
 const ContactList = () => {
 	const addContactRef = React.useRef(null);
 	const [modalImportOpen, setModalImportOpen] = React.useState(false);
-	const { data, refetch } = useGetContactListQuery();
+	const [selectedList, setSelectedList] = React.useState(0);
+	const { data, refetch } = useGetContactListQuery({ list: selectedList });
+	const { data: contactList, refetch: refetchContactLists } = useGetContactListsQuery();
+
+	const handleListChange = (event) => {
+		setSelectedList(event.target.value);
+	};
 
 	const openAddContact = (contact) => {
 		addContactRef.current?.open(contact);
@@ -27,9 +46,28 @@ const ContactList = () => {
 
 	return (
 		<React.Fragment>
-			<MainCard
-				title={"Contacts"}
-				secondary={
+			<Card sx={{ p: 2.5 }} title={"Contacts"}>
+				<Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 3, alignItems: "center" }}>
+					<Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+						<Typography fontWeight={600}>Contacts</Typography>
+						<FormControl sx={{ minWidth: 200 }}>
+							<InputLabel id="demo-simple-select-label">Liste</InputLabel>
+							<Select
+								labelId="demo-simple-select-label"
+								id="demo-simple-select"
+								value={selectedList}
+								label="Age"
+								onChange={handleListChange}
+							>
+								<MenuItem value={0}>Toutes</MenuItem>
+								{contactList?.map((list) => (
+									<MenuItem key={list.id} value={list.id}>
+										{list.name}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
 					<Box sx={{ display: "flex", gap: 2 }}>
 						<Button variant="contained" onClick={openModalList}>
 							Ajouter une liste
@@ -38,8 +76,7 @@ const ContactList = () => {
 							Ajouter
 						</Button>
 					</Box>
-				}
-			>
+				</Box>
 				<Grid container spacing={3}>
 					{data?.map((contact) => (
 						<Grid item xs={3} key={contact.id}>
@@ -73,7 +110,7 @@ const ContactList = () => {
 						</Grid>
 					))}
 				</Grid>
-			</MainCard>
+			</Card>
 			<AddContactModal ref={addContactRef} refetch={refetch} />
 			<ImportList open={modalImportOpen} handleClose={closeImportModal} refetch={refetch} />
 		</React.Fragment>

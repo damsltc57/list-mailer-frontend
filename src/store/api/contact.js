@@ -43,16 +43,16 @@ export const contactApi = api.injectEndpoints({
 			},
 		}),
 		getContactList: build.query({
-			query: () => {
+			query: ({ list }) => {
 				return {
 					method: "GET",
-					url: `/contact/list`,
+					url: `/contact/list/${list}`,
 					headers: {},
 				};
 			},
 		}),
 		findContact: build.query({
-			query: ({ categoryValue, formalityLevel, interesting, country, query }) => {
+			query: ({ categoryValue, formalityLevel, interesting, country, query, listId }) => {
 				return {
 					method: "GET",
 					url: `/contact/find`,
@@ -63,20 +63,30 @@ export const contactApi = api.injectEndpoints({
 						interesting,
 						country,
 						query,
+						listId,
 					},
 				};
 			},
 		}),
 		importContacts: build.mutation({
-			query: ({ file, listName }) => {
+			query: ({ file, list }) => {
 				const body = new FormData();
 				body.append("file", file);
-				body.append("listName", listName);
+				body.append("list", JSON.stringify(list));
 				return {
 					method: "POST",
 					url: "/contact/import",
 					headers: {},
 					body,
+				};
+			},
+		}),
+		getContactLists: build.query({
+			query: () => {
+				return {
+					method: "GET",
+					url: `/contact/contact-list`,
+					headers: {},
 				};
 			},
 		}),
@@ -87,6 +97,7 @@ export const contactApi = api.injectEndpoints({
 export const {
 	useCreateContactMutation,
 	useGetContactListQuery,
+	useGetContactListsQuery,
 	useImportContactsMutation,
 	useUpdateContactMutation,
 	useFindContactQuery,

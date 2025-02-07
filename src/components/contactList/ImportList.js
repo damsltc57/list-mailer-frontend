@@ -2,10 +2,10 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Box, Button, Typography } from "@mui/material";
-import { useImportContactsMutation } from "../../store/api/contact";
+import { useGetContactListsQuery, useImportContactsMutation } from "../../store/api/contact";
 import { styled } from "@mui/material/styles";
 import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
+import ImportListAutocomplete from "./ImportListAutocomplete";
 
 const VisuallyHiddenInput = styled("input")({
 	clip: "rect(0 0 0 0)",
@@ -21,16 +21,18 @@ const VisuallyHiddenInput = styled("input")({
 
 const ImportList = ({ open, handleClose, refetch }) => {
 	const [importContacts] = useImportContactsMutation();
-	const [listName, setListName] = React.useState("");
+	const [list, setList] = React.useState(null);
 	const [file, setFile] = React.useState(null);
 	const [isLoading, setIsLoading] = React.useState(false);
+	const { data: contactList, refetch: refetchContactLists } = useGetContactListsQuery();
 
 	const uploadFile = () => {
 		setIsLoading(true);
-		importContacts({ file, listName }).finally(() => {
+		importContacts({ file, list }).finally(() => {
 			setFile(null);
-			setListName("");
+			setList(null);
 			refetch();
+			refetchContactLists();
 			handleClose();
 			setIsLoading(false);
 		});
@@ -46,15 +48,7 @@ const ImportList = ({ open, handleClose, refetch }) => {
 		<Dialog onClose={handleClose} open={open} maxWidth={false} sx={{ padding: 5 }}>
 			<DialogTitle sx={{ fontWeight: 800, fontSize: 22 }}>Importer un csv</DialogTitle>
 			<Box sx={{ padding: 3, display: "flex", flexDirection: "column", gap: 4, minWidth: 400 }}>
-				<TextField
-					fullWidth
-					id="outlined-controlled"
-					label="Nom de la liste"
-					value={listName}
-					onChange={(event) => {
-						setListName(event.target.value);
-					}}
-				/>
+				<ImportListAutocomplete contactList={contactList} list={list} setList={setList} />
 				<Box>
 					<Button
 						fullWidth
@@ -94,9 +88,9 @@ const ImportList = ({ open, handleClose, refetch }) => {
 					role={undefined}
 					tabIndex={-1}
 					variant="contained"
-					disabled={!file || !listName}
+					disabled={!file || !list}
 					onClick={uploadFile}
-					loading={true}
+					loading={isLoading}
 				>
 					Créer la liste
 				</Button>

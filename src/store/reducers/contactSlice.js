@@ -15,10 +15,13 @@ const contactSlice = createSlice({
 		resetContacts(state) {
 			state.selectedContacts = [];
 		},
+		addMultipleContacts(state, action) {
+			state.selectedContacts.push(...action.payload);
+		},
 	},
 });
 
 export default contactSlice.reducer;
-export const { addSelectedContact, removeSelectedContact, resetContacts } = contactSlice.actions;
+export const { addSelectedContact, removeSelectedContact, resetContacts, addMultipleContacts } = contactSlice.actions;
 
 export const getSelectedContacts = (state) => state.contact.selectedContacts;

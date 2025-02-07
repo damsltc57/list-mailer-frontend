@@ -17,7 +17,7 @@ const GridPreviewSelectedContacts = () => {
 				<Grid item>
 					<Card onClick={() => removeItem(contact)}>
 						<CardActionArea>
-							<CardContent>
+							<CardContent sx={{ padding: "6px 12px" }}>
 								<Typography sx={{ fontSize: 14 }} color="text.primary" fontWeight={600}>
 									{contact?.companyName}
 								</Typography>
