@@ -223,8 +223,13 @@ function App() {
 					</Grid>
 				) : (
 					<Grid item>
-						<Button variant={"contained"} onClick={handleOpen} aria-label="delete">
-							Ajouter un e-mail
+						<Button
+							variant={"contained"}
+							onClick={handleOpen}
+							aria-label="delete"
+							sx={{ textTransform: "none" }}
+						>
+							Ajouter un nouveau compte mail
 						</Button>
 					</Grid>
 				)}
