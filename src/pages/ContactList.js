@@ -79,7 +79,7 @@ const ContactList = () => {
 				</Box>
 				<Grid container spacing={3}>
 					{data?.map((contact) => (
-						<Grid item xs={3} key={contact.id}>
+						<Grid item xs={'auto'} key={contact.id}>
 							<Card sx={{ minWidth: 275 }}>
 								<CardActionArea onClick={() => openAddContact(contact)}>
 									<CardContent>

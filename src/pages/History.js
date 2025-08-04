@@ -11,6 +11,7 @@ const style = {
 	transform: "translate(-50%, -50%)",
 	width: 1200,
 	maxWidth: "80vw",
+	maxHeight: "90vh",
 };
 
 const History = () => {
@@ -66,7 +67,7 @@ const History = () => {
 						<Typography color={"secondary"} mt={2}>
 							Envoyé le {dayjs(open?.createdAt).format("DD/MM/YYYY")} à {open?.to?.length} destinataire(s)
 						</Typography>
-						<Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
+						<Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2, overflow: 'auto', maxHeight: '50vh' }}>
 							{open?.to?.map((to) => (
 								<Card>
 									<CardContent>
