@@ -33,9 +33,9 @@ const AddressesEmailInfo = ({ open, handleClose, emails, refetchUserList }) => {
 			<ModalContainer sx={{}}>
 				<ModalSubContainer>
 					<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-						<Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+						<Tabs variant="scrollable" scrollButtons="auto" value={value} onChange={handleChange} aria-label="basic tabs example">
 							{emails?.map((email) => (
-								<Tab label={email.email} />
+								<Tab label={email.email} sx={{textTransform: "none"}}  />
 							))}
 							<Tab label={"Ajouter"} iconPosition="start" icon={<AddIcon />} />
 						</Tabs>
