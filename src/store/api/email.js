@@ -36,7 +36,7 @@ export const emailApi = api.injectEndpoints({
 		updateAddressEmail: build.mutation({
 			query: ({ addressId, ...args }) => {
 				return {
-					method: "PATCH",
+					method: "POST",
 					url: `/mail-account/update/${addressId}`,
 					headers: {},
 					body: args,
