@@ -303,13 +303,14 @@ const ContactSelectionContent = () => {
 			</div>
 
 			<GridPreviewSelectedContacts />
-			<Grid container sx={{ mt: 1, overflowY: "auto", height: "100%" }} spacing={3}>
-				{data?.map((contact) => (
-					<Grid item xs={3} key={contact.id}>
-						<ContactItem contact={contact} />
-					</Grid>
-				))}
-			</Grid>
+			<ContactItem contact={data} />
+			{/*<Grid container sx={{ mt: 1, overflowY: "auto", height: "100%" }} spacing={3}>*/}
+			{/*	{data?.map((contact) => (*/}
+			{/*		<Grid item xs={3} key={contact.id}>*/}
+			{/*			<ContactItem contact={contact} />*/}
+			{/*		</Grid>*/}
+			{/*	))}*/}
+			{/*</Grid>*/}
 		</Box>
 	);
 };

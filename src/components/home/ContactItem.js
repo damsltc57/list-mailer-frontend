@@ -1,86 +1,104 @@
+// ContactsDataGrid.jsx (JS)
 import React from "react";
-import { Box, Card, CardActionArea, CardContent, Chip, Stack, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { addSelectedContact, getSelectedContacts, removeSelectedContact } from "../../store/reducers/contactSlice";
-import { blueGrey } from "@mui/material/colors";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { styled } from "@mui/material/styles";
-import { blue } from "@ant-design/colors";
+import { Box, Button, Stack, Paper } from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
-const CheckContainer = styled(Box)(() => {
-	return {
-		position: "absolute",
-		top: 15,
-		right: 5,
-		transition: "opacity 0.5s ease"
+export default function ContactsDataGrid({ contacts }) {
+	// Colonnes feuilles
+	const leafColumns = [
+		{ field: "companyName", headerName: "Company", width: 180 },
+		{ field: "firstName", headerName: "First name", width: 140 },
+		{ field: "lastName", headerName: "Last name", width: 160 },
+		{ field: "country", headerName: "Country", width: 120 },
+		{ field: "email", headerName: "Email", width: 240 },
+	];
+
+	// Colonnes synthétiques (quand le groupe est replié)
+	const nameGroupColumn = {
+		field: "nameGroup",
+		headerName: "Name",
+		width: 220,
+		valueGetter: (params) =>
+			`${params.row.firstName ?? ""} ${params.row.lastName ?? ""}`.trim(),
+		sortComparator: (v1, v2, p1, p2) =>
+			`${p1.row.lastName ?? ""} ${p1.row.firstName ?? ""}`.localeCompare(
+				`${p2.row.lastName ?? ""} ${p2.row.firstName ?? ""}`
+			),
 	};
-});
 
-const StyledChip = styled(Chip)(() => {
-	return {
-		"& .MuiChip-label": {
-			fontSize: 10, paddingLeft: 5,
-			paddingRight: 5
-		},
-		height: 24
+	const contactGroupColumn = {
+		field: "contactGroup",
+		headerName: "Contact",
+		width: 260,
+		valueGetter: (p) => p.row.email,
 	};
-});
 
-const ContactItem = ({ contact }) => {
-	const dispatch = useDispatch();
-	const selectedContacts = useSelector(getSelectedContacts);
+	// Ordre d’affichage
+	const columns = [
+		{ ...leafColumns[0] }, // companyName
+		nameGroupColumn,       // groupe Name (synthétique)
+		{ ...leafColumns[3] }, // country
+		contactGroupColumn,    // groupe Contact (synthétique)
+		{ ...leafColumns[1] }, // firstName
+		{ ...leafColumns[2] }, // lastName
+		{ ...leafColumns[4] }, // email
+	];
 
-	const isSelected = React.useMemo(() => {
-		return selectedContacts?.some((item) => item.id === contact.id);
-	}, [contact, selectedContacts]);
+	// Visibilité par défaut : groupes ouverts (enfants visibles, colonnes groupe masquées)
+	const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({
+		companyName: true,
+		country: true,
+		firstName: true,
+		lastName: true,
+		email: true,
+		nameGroup: false,
+		contactGroup: false,
+	});
 
-	const selectItem = () => {
-		if (isSelected) {
-			dispatch(removeSelectedContact(contact));
-		} else {
-			dispatch(addSelectedContact(contact));
-		}
-	};
+	// Bascule repli/dépli
+	const toggleGroup = React.useCallback((group) => {
+		setColumnVisibilityModel((prev) => {
+			const next = { ...prev };
+			if (group === "name") {
+				const collapsed = !prev.nameGroup;
+				next.nameGroup = collapsed;
+				next.firstName = !collapsed;
+				next.lastName = !collapsed;
+			} else if (group === "contact") {
+				const collapsed = !prev.contactGroup;
+				next.contactGroup = collapsed;
+				next.email = !collapsed;
+			}
+			return next;
+		});
+	}, []);
 
 	return (
-		<Card sx={{ backgroundColor: isSelected ? blueGrey[100] : "transparent", overflow: "visible" }}
-			  onClick={selectItem}>
-			<CardActionArea>
-				<CardContent>
-					<CheckContainer sx={{ opacity: +isSelected }}>
-						<CheckCircleOutlineIcon color={"primary"} sx={{ fontSize: 30 }} />
-					</CheckContainer>
-					<Typography sx={{ fontSize: 16 }} color="text.primary" gutterBottom fontWeight={700}>
-						{contact?.companyName}
-					</Typography>
-					<Typography sx={{ fontSize: 14 }} color="text.primary">
-						{`${contact?.firstName} ${contact?.firstName}`}
-					</Typography>
-					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-						{contact.email}
-					</Typography>
-					<Box sx={{
-						display: "flex",
-						justifyContent: "flex-end",
-						position: "absolute",
-						top: -10,
-						right: -20,
-						zIndex: 1000,
-						overflow: "visible"
-					}}>
-						{contact.formalityLevel === "informal" ? (
-							<StyledChip sx={{ borderRadius: 20 }} label="Tutoiement" color="primary" />
-						) : (
-							<StyledChip sx={{ borderRadius: 20 }} label="Vouvoiement" color="success" />
-						)}
-					</Box>
-					{contact?.collaborators?.map((collaborator) => (
-						<Chip label={collaborator.firstName}/>
-					))}
-				</CardContent>
-			</CardActionArea>
-		</Card>
-	);
-};
+		<Paper sx={{ height: 520, width: "100%" }}>
+			{/*<Stack direction="row" spacing={1} sx={{ p: 1 }}>*/}
+			{/*	<Button size="small" onClick={() => toggleGroup("name")}>*/}
+			{/*		Replier/Déplier “Name”*/}
+			{/*	</Button>*/}
+			{/*	<Button size="small" onClick={() => toggleGroup("contact")}>*/}
+			{/*		Replier/Déplier “Contact”*/}
+			{/*	</Button>*/}
+			{/*</Stack>*/}
 
-export default ContactItem;
+			<Box sx={{ height: "calc(520px - 48px)" }}>
+				<DataGrid
+					rows={contacts}
+					columns={columns}
+					disableRowSelectionOnClick
+					slotProps={{
+						toolbar: {
+							showQuickFilter: true,
+							quickFilterProps: { debounceMs: 250 },
+						},
+					}}
+					columnVisibilityModel={columnVisibilityModel}
+					onColumnVisibilityModelChange={setColumnVisibilityModel}
+				/>
+			</Box>
+		</Paper>
+	);
+}
