@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Card, CardActionArea, CardContent, Chip, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, Chip, Stack, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { addSelectedContact, getSelectedContacts, removeSelectedContact } from "../../store/reducers/contactSlice";
 import { blueGrey } from "@mui/material/colors";
@@ -10,9 +10,19 @@ import { blue } from "@ant-design/colors";
 const CheckContainer = styled(Box)(() => {
 	return {
 		position: "absolute",
-		top: 5,
+		top: 15,
 		right: 5,
-		transition: "opacity 0.5s ease",
+		transition: "opacity 0.5s ease"
+	};
+});
+
+const StyledChip = styled(Chip)(() => {
+	return {
+		"& .MuiChip-label": {
+			fontSize: 10, paddingLeft: 5,
+			paddingRight: 5
+		},
+		height: 24
 	};
 });
 
@@ -33,7 +43,8 @@ const ContactItem = ({ contact }) => {
 	};
 
 	return (
-		<Card sx={{ backgroundColor: isSelected ? blueGrey[100] : "transparent" }} onClick={selectItem}>
+		<Card sx={{ backgroundColor: isSelected ? blueGrey[100] : "transparent", overflow: "visible" }}
+			  onClick={selectItem}>
 			<CardActionArea>
 				<CardContent>
 					<CheckContainer sx={{ opacity: +isSelected }}>
@@ -48,13 +59,24 @@ const ContactItem = ({ contact }) => {
 					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 						{contact.email}
 					</Typography>
-					<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+					<Box sx={{
+						display: "flex",
+						justifyContent: "flex-end",
+						position: "absolute",
+						top: -10,
+						right: -20,
+						zIndex: 1000,
+						overflow: "visible"
+					}}>
 						{contact.formalityLevel === "informal" ? (
-							<Chip sx={{ borderRadius: 20 }} label="Tutoiement" color="primary" />
+							<StyledChip sx={{ borderRadius: 20 }} label="Tutoiement" color="primary" />
 						) : (
-							<Chip sx={{ borderRadius: 20 }} label="Vouvoiement" color="success" />
+							<StyledChip sx={{ borderRadius: 20 }} label="Vouvoiement" color="success" />
 						)}
 					</Box>
+					{contact?.collaborators?.map((collaborator) => (
+						<Chip label={collaborator.firstName}/>
+					))}
 				</CardContent>
 			</CardActionArea>
 		</Card>

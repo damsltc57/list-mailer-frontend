@@ -64,7 +64,7 @@ const ContactSelectionContent = () => {
 	const [interesting, setInteresting] = React.useState("");
 	const [country, setCountry] = React.useState("");
 	const [query, setQuery] = React.useState("");
-	const [selectedList, setSelectedList] = React.useState(0);
+	const [selectedList, setSelectedList] = React.useState(-1);
 	const selectedContacts = useSelector(getSelectedContacts);
 	const dispatch = useDispatch();
 
@@ -234,41 +234,41 @@ const ContactSelectionContent = () => {
 						))}
 					</Select>
 				</FormControl>
-				<FormControl sx={{ m: 1, width: 200 }}>
-					<InputLabel id="demo-multiple-checkbox-label">Pays</InputLabel>
-					<Select
-						labelId="demo-multiple-checkbox-label"
-						id="demo-multiple-checkbox"
-						value={country}
-						onChange={handleCountryChange}
-						input={<OutlinedInput label="Tag" />}
-						IconComponent={() => (
-							<>
-								{country !== "" ? (
-									<IconButton
-										size="small"
-										onClick={(e) => {
-											setCountry("");
-										}}
-									>
-										<ClearIcon />
-									</IconButton>
-								) : undefined}
-							</>
-						)}
-						renderValue={(selected) => {
-							return COUNTRIES[selected].name;
-						}}
-						MenuProps={MenuProps}
-					>
-						{Object.values(COUNTRIES).map(({ name, value }) => (
-							<MenuItem key={value} value={value}>
-								<Checkbox checked={country === value} />
-								<ListItemText primary={name} />
-							</MenuItem>
-						))}
-					</Select>
-				</FormControl>
+				{/*<FormControl sx={{ m: 1, width: 200 }}>*/}
+				{/*	<InputLabel id="demo-multiple-checkbox-label">Pays</InputLabel>*/}
+				{/*	<Select*/}
+				{/*		labelId="demo-multiple-checkbox-label"*/}
+				{/*		id="demo-multiple-checkbox"*/}
+				{/*		value={country}*/}
+				{/*		onChange={handleCountryChange}*/}
+				{/*		input={<OutlinedInput label="Tag" />}*/}
+				{/*		IconComponent={() => (*/}
+				{/*			<>*/}
+				{/*				{country !== "" ? (*/}
+				{/*					<IconButton*/}
+				{/*						size="small"*/}
+				{/*						onClick={(e) => {*/}
+				{/*							setCountry("");*/}
+				{/*						}}*/}
+				{/*					>*/}
+				{/*						<ClearIcon />*/}
+				{/*					</IconButton>*/}
+				{/*				) : undefined}*/}
+				{/*			</>*/}
+				{/*		)}*/}
+				{/*		renderValue={(selected) => {*/}
+				{/*			return COUNTRIES[selected].name;*/}
+				{/*		}}*/}
+				{/*		MenuProps={MenuProps}*/}
+				{/*	>*/}
+				{/*		{Object.values(COUNTRIES).map(({ name, value }) => (*/}
+				{/*			<MenuItem key={value} value={value}>*/}
+				{/*				<Checkbox checked={country === value} />*/}
+				{/*				<ListItemText primary={name} />*/}
+				{/*			</MenuItem>*/}
+				{/*		))}*/}
+				{/*	</Select>*/}
+				{/*</FormControl>*/}
 				<FormControl sx={{ m: 1, width: 200 }}>
 					<InputLabel id="demo-simple-select-label">Liste</InputLabel>
 					<Select
@@ -278,6 +278,7 @@ const ContactSelectionContent = () => {
 						label="Age"
 						onChange={handleListChange}
 					>
+						<MenuItem value={-1}>Aucune</MenuItem>
 						<MenuItem value={0}>Toutes</MenuItem>
 						{contactList?.map((list) => (
 							<MenuItem key={list.id} value={list.id}>
