@@ -90,6 +90,18 @@ export const contactApi = api.injectEndpoints({
 				};
 			},
 		}),
+		getContactByIds: build.query({
+			query: ({ ids }) => {
+				return {
+					method: "GET",
+					url: `/contact/ids`,
+					headers: {},
+					params: {
+						ids,
+					},
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
@@ -101,4 +113,5 @@ export const {
 	useImportContactsMutation,
 	useUpdateContactMutation,
 	useFindContactQuery,
+	useGetContactByIdsQuery,
 } = contactApi;

@@ -64,7 +64,7 @@ const ContactSelectionContent = () => {
 	const [interesting, setInteresting] = React.useState("");
 	const [country, setCountry] = React.useState("");
 	const [query, setQuery] = React.useState("");
-	const [selectedList, setSelectedList] = React.useState(-1);
+	const [selectedList, setSelectedList] = React.useState(0);
 	const selectedContacts = useSelector(getSelectedContacts);
 	const dispatch = useDispatch();
 
@@ -287,11 +287,11 @@ const ContactSelectionContent = () => {
 						))}
 					</Select>
 				</FormControl>
-				<FormControl sx={{ m: 1, width: 200 }}>
-					<Button variant={"outlined"} onClick={onSelectAllPressed}>
-						{selectedContacts?.length === 0 ? "Tout sélectionner" : "Tout déselectionner"}
-					</Button>
-				</FormControl>
+				{/*<FormControl sx={{ m: 1, width: 200 }}>*/}
+				{/*	<Button variant={"outlined"} onClick={onSelectAllPressed}>*/}
+				{/*		{selectedContacts?.length === 0 ? "Tout sélectionner" : "Tout déselectionner"}*/}
+				{/*	</Button>*/}
+				{/*</FormControl>*/}
 				<TextField
 					id="firstName"
 					label="Rechercher"
@@ -302,8 +302,8 @@ const ContactSelectionContent = () => {
 				/>
 			</div>
 
+			<ContactItem contacts={data} />
 			<GridPreviewSelectedContacts />
-			<ContactItem contact={data} />
 			{/*<Grid container sx={{ mt: 1, overflowY: "auto", height: "100%" }} spacing={3}>*/}
 			{/*	{data?.map((contact) => (*/}
 			{/*		<Grid item xs={3} key={contact.id}>*/}
