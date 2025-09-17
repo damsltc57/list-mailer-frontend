@@ -5,7 +5,7 @@ import ContactSelectionContent from "./ContactSelectionContent";
 import GridPreviewFinalSelectedContacts from "./GridPreviewFinalSelectedContacts";
 import { useSendEmailMutation } from "../../store/api/email";
 import { useDispatch, useSelector } from "react-redux";
-import { getSelectedContacts, resetContacts } from "../../store/reducers/contactSlice";
+import { getCollaborators, getSelectedContacts, resetContacts } from "../../store/reducers/contactSlice";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -35,6 +35,7 @@ const ContactSelectionModal = forwardRef(function ContactSelectionModal(
 	const [sendEmailMutation] = useSendEmailMutation();
 	const selectedContacts = useSelector(getSelectedContacts);
 	const dispatch = useDispatch();
+	const selectedCollaborators = useSelector(getCollaborators);
 
 	React.useImperativeHandle(ref, () => {
 		return {
@@ -48,12 +49,18 @@ const ContactSelectionModal = forwardRef(function ContactSelectionModal(
 
 	const sendEmail = () => {
 		const content = editor.getHTML();
-		sendEmailMutation({ object, selectedAddress, attachments, content, to: selectedContacts });
+
+		const buildSelectedContacts = selectedContacts.map((contact) => {
+			const collaborators = selectedCollaborators[contact]?.collaborators;
+			return { id: contact, collaborators };
+		});
+
+		sendEmailMutation({ object, selectedAddress, attachments, content, to: buildSelectedContacts });
 		//TODO: uncomment
 		// localStorage.removeItem("draftMail");
 		// localStorage.removeItem("draftObject");
 		// editor.commands.setContent(`<p><br/></p><p><br/></p><p><br/></p>${signature}`);
-		// dispatch(resetContacts());
+		dispatch(resetContacts());
 		// setObject("");
 		setActiveStep(0);
 		setOpen(false);
