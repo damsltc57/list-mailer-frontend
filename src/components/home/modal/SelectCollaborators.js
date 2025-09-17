@@ -61,7 +61,16 @@ function ConfirmationDialogRaw(props) {
 									}
 								/>
 							}
-							label={option.firstName + " " + option.lastName + " - " + option.email}
+							label={
+								option.firstName +
+								" " +
+								option.lastName +
+								" - " +
+								option.email +
+								" - (" +
+								option.position +
+								")"
+							}
 						/>
 					))}
 				</FormGroup>
