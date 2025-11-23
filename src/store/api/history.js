@@ -11,8 +11,17 @@ export const historyApi = api.injectEndpoints({
 				};
 			},
 		}),
+		getBatchInfo: build.query({
+			query: ({ batchId }) => {
+				return {
+					method: "GET",
+					url: `/history/batch/infos?batchId=${batchId}`,
+					headers: {},
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
 
-export const { useGetAllHistoryQuery } = historyApi;
+export const { useGetAllHistoryQuery, useGetBatchInfoQuery } = historyApi;
