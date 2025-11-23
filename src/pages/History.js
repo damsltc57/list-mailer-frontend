@@ -152,7 +152,7 @@ const History = () => {
 								flexWrap: "wrap",
 								gap: 2,
 								mt: 2,
-
+								overflow: "auto",
 								maxHeight: "50vh",
 							}}
 						>
