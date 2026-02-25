@@ -52,6 +52,11 @@ const Palette = (mode) => {
             background: {
                 paper: paletteColor.grey[0],
                 default: paletteColor.grey.A50
+            },
+            statColors: {
+                Envoyé: '#4caf50',
+                Erreur: '#f44336',
+                Attente: '#ff9800'
             }
         }
     });

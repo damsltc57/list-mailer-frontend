@@ -1,9 +1,7 @@
 // material-ui
-import { Box, IconButton, Link, useMediaQuery } from "@mui/material";
-import { GithubOutlined } from "@ant-design/icons";
+import { Box, useMediaQuery } from "@mui/material";
 
 // project import
-import Search from "./Search";
 import Profile from "./Profile";
 import MobileSection from "./MobileSection";
 
@@ -13,13 +11,12 @@ const HeaderContent = () => {
 	const matchesXs = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
 	return (
-		<>
-			{!matchesXs && <Search />}
-			{matchesXs && <Box sx={{ width: "100%", ml: 1 }} />}
+		<Box sx={{ display: 'flex', alignItems: 'center', width: '100%', ml: { xs: 1, md: 2 } }}>
+			<Box sx={{ flexGrow: 1 }} />
 
 			{!matchesXs && <Profile />}
 			{matchesXs && <MobileSection />}
-		</>
+		</Box>
 	);
 };
 

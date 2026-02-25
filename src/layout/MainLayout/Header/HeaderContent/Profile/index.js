@@ -91,10 +91,16 @@ const Profile = () => {
 		<Box sx={{ flexShrink: 0, ml: 0.75 }}>
 			<ButtonBase
 				sx={{
-					p: 0.25,
-					bgcolor: open ? iconBackColorOpen : "transparent",
-					borderRadius: 1,
-					"&:hover": { bgcolor: "secondary.lighter" },
+					p: 0.75,
+					px: 2,
+					bgcolor: open ? "grey.50" : "white",
+					borderRadius: 8,
+					border: "1px solid",
+					borderColor: "divider",
+					"&:hover": { bgcolor: "grey.50" },
+					boxShadow: '0 2px 14px rgba(0,0,0,0.02)',
+					display: 'flex',
+					justifyContent: 'center'
 				}}
 				aria-label="open profile"
 				ref={anchorRef}
@@ -102,8 +108,8 @@ const Profile = () => {
 				aria-haspopup="true"
 				onClick={handleToggle}
 			>
-				<Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-					<Typography variant="subtitle1">Mon profil</Typography>
+				<Stack direction="row" alignItems="center" justifyContent="center">
+					<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Damien Laurent</Typography>
 				</Stack>
 			</ButtonBase>
 			<Popper

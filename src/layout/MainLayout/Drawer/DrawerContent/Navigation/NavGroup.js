@@ -37,11 +37,10 @@ const NavGroup = ({ item }) => {
             subheader={
                 item.title &&
                 drawerOpen && (
-                    <Box sx={{ pl: 3, mb: 1.5 }}>
-                        <Typography variant="subtitle2" color="textSecondary">
+                    <Box sx={{ pl: 3, mb: 1.5, mt: 1 }}>
+                        <Typography variant="overline" color="textSecondary" sx={{ fontWeight: 'bold', letterSpacing: 1, display: 'block' }}>
                             {item.title}
                         </Typography>
-                        {/* only available in paid version */}
                     </Box>
                 )
             }

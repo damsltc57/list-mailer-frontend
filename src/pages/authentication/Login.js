@@ -13,14 +13,12 @@ const Login = () => (
 	<AuthWrapper>
 		<Grid container spacing={3}>
 			<Grid item xs={12}>
-				<Stack
-					direction="row"
-					justifyContent="space-between"
-					alignItems="baseline"
-					sx={{ mb: { xs: -0.5, sm: 0.5 } }}
-				>
-					<Typography variant="h3">Login</Typography>
-				</Stack>
+				<Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+					Content de vous revoir ! 👋
+				</Typography>
+				<Typography variant="body1" color="textSecondary" sx={{ mt: 1, mb: 3 }}>
+					Veuillez entrer vos identifiants pour vous connecter à votre espace.
+				</Typography>
 			</Grid>
 			<Grid item xs={12}>
 				<AuthLogin />

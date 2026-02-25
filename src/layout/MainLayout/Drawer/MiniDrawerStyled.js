@@ -34,11 +34,19 @@ const MiniDrawerStyled = styled(Drawer, { shouldForwardProp: (prop) => prop !== 
 	boxSizing: "border-box",
 	...(open && {
 		...openedMixin(theme),
-		"& .MuiDrawer-paper": openedMixin(theme),
+		"& .MuiDrawer-paper": {
+			...openedMixin(theme),
+			borderRight: "none",
+			boxShadow: theme.shadows[1],
+		},
 	}),
 	...(!open && {
 		...closedMixin(theme),
-		"& .MuiDrawer-paper": closedMixin(theme),
+		"& .MuiDrawer-paper": {
+			...closedMixin(theme),
+			borderRight: "none",
+			boxShadow: theme.shadows[1],
+		},
 	}),
 }));
 

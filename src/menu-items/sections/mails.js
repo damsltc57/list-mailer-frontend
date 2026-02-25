@@ -1,5 +1,6 @@
 import MailIcon from "@mui/icons-material/Mail";
 import HistoryIcon from "@mui/icons-material/History";
+import BarChartIcon from "@mui/icons-material/BarChart";
 
 const mails = {
 	id: "group-orders",
@@ -20,6 +21,14 @@ const mails = {
 			type: "item",
 			url: "/historique",
 			icon: HistoryIcon,
+			breadcrumbs: false,
+		},
+		{
+			id: "statistics",
+			title: "Statistiques",
+			type: "item",
+			url: "/statistiques",
+			icon: BarChartIcon,
 			breadcrumbs: false,
 		},
 	],

@@ -10,6 +10,7 @@ import {
 	InputLabel,
 	OutlinedInput,
 	Stack,
+	CircularProgress,
 } from "@mui/material";
 
 // third party
@@ -57,28 +58,21 @@ const AuthLogin = () => {
 				})}
 				onSubmit={async ({ email, password }, { setErrors, setStatus, setSubmitting }) => {
 					try {
-						getUserToken({ email, password })
-							.then((data) => {
-								if (data.isError) {
-									setStatus({ success: false });
-									setErrors({ submit: "Mot de passe invalide" });
-									setSubmitting(false);
-									return;
-								}
-								dispatch(setAuthToken(data.data?.token));
-								dispatch(setUser(data.data?.user));
-								navigate("/");
-							})
-							.catch(() => {
-								setStatus({ success: false });
-								setErrors({ submit: "Mot de passe invalide" });
-								setSubmitting(false);
-							});
-						setStatus({ success: false });
-						setSubmitting(false);
+						const data = await getUserToken({ email, password });
+
+						if (data.isError) {
+							setStatus({ success: false });
+							setErrors({ submit: "Identifiants ou mot de passe invalide" });
+							setSubmitting(false);
+							return;
+						}
+
+						dispatch(setAuthToken(data.data?.token));
+						dispatch(setUser(data.data?.user));
+						navigate("/");
 					} catch (err) {
 						setStatus({ success: false });
-						setErrors({ submit: err.message });
+						setErrors({ submit: err.message || "Une erreur est survenue" });
 						setSubmitting(false);
 					}
 				}}
@@ -96,9 +90,16 @@ const AuthLogin = () => {
 										name="email"
 										onBlur={handleBlur}
 										onChange={handleChange}
-										placeholder="Enter email address"
+										placeholder="name@exemple.com"
 										fullWidth
 										error={Boolean(touched.email && errors.email)}
+										sx={{
+											bgcolor: "grey.50",
+											borderRadius: 3,
+											"&.Mui-focused": {
+												bgcolor: "common.white",
+											}
+										}}
 									/>
 									{touched.email && errors.email && (
 										<FormHelperText error id="standard-weight-helper-text-email-login">
@@ -132,7 +133,14 @@ const AuthLogin = () => {
 												</IconButton>
 											</InputAdornment>
 										}
-										placeholder="Enter password"
+										placeholder="Votre mot de passe"
+										sx={{
+											bgcolor: "grey.50",
+											borderRadius: 3,
+											"&.Mui-focused": {
+												bgcolor: "common.white",
+											}
+										}}
 									/>
 									{touched.password && errors.password && (
 										<FormHelperText error id="standard-weight-helper-text-password-login">
@@ -157,8 +165,21 @@ const AuthLogin = () => {
 										type="submit"
 										variant="contained"
 										color="primary"
+										startIcon={isSubmitting && <CircularProgress size={20} color="inherit" />}
+										sx={{
+											borderRadius: 8,
+											py: 1.5,
+											fontSize: "1rem",
+											fontWeight: "bold",
+											textTransform: "none",
+											boxShadow: "0 4px 14px 0 rgba(108, 92, 231, 0.39)",
+											"&:hover": {
+												boxShadow: "0 6px 20px rgba(108, 92, 231, 0.4)",
+												transform: "translateY(-1px)",
+											}
+										}}
 									>
-										Login
+										{isSubmitting ? "Connexion..." : "Se connecter"}
 									</Button>
 								</AnimateButton>
 							</Grid>

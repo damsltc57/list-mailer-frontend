@@ -13,14 +13,11 @@ const Header = ({ open, handleDrawerToggle }) => {
 	const theme = useTheme();
 	const matchDownMD = useMediaQuery(theme.breakpoints.down("lg"));
 
-	const iconBackColor = "grey.100";
-	const iconBackColorOpen = "grey.200";
-
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	// common header
 	const mainHeader = (
-		<Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+		<Toolbar sx={{ display: "flex", justifyContent: "space-between", px: { xs: 2, sm: 3, md: 4 } }}>
 			<Box>
 				<IconButton
 					disableRipple
@@ -31,7 +28,10 @@ const Header = ({ open, handleDrawerToggle }) => {
 					sx={{
 						zIndex: 1305,
 						color: "text.primary",
-						bgcolor: open ? iconBackColorOpen : iconBackColor,
+						bgcolor: "white",
+						border: "1px solid",
+						borderColor: "divider",
+						borderRadius: 2,
 						ml: { xs: 0, lg: !open ? 6 : -2 },
 						transition: "margin-left 0.25s",
 					}}
@@ -39,7 +39,7 @@ const Header = ({ open, handleDrawerToggle }) => {
 					{!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
 				</IconButton>
 			</Box>
-			<Box sx={{ display: "flex", alignItems: "center" }}>
+			<Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
 				<HeaderContent />
 			</Box>
 		</Toolbar>
@@ -51,8 +51,9 @@ const Header = ({ open, handleDrawerToggle }) => {
 		color: "inherit",
 		elevation: 0,
 		sx: {
-			borderBottom: `1px solid ${theme.palette.divider}`,
-			// boxShadow: theme.customShadows.z1
+			borderBottom: 'none',
+			bgcolor: theme.palette.mode === "dark" ? "background.default" : "#f8f9fc",
+			pt: 1, // Add slight padding to the top for better float matching
 		},
 	};
 

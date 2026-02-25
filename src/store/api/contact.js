@@ -51,6 +51,30 @@ export const contactApi = api.injectEndpoints({
 				};
 			},
 		}),
+		getPaginatedContactList: build.query({
+			query: ({ list, page = 1, limit = 20 }) => {
+				return {
+					method: "GET",
+					url: `/contact/list/${list}?page=${page}&limit=${limit}`,
+					headers: {},
+				};
+			},
+			serializeQueryArgs: ({ queryArgs }) => {
+				return { list: queryArgs.list };
+			},
+			merge: (currentCache, newItems) => {
+				if (newItems.page === 1) {
+					return newItems;
+				}
+				currentCache.contacts.push(...newItems.contacts);
+				currentCache.page = newItems.page;
+				currentCache.totalPages = newItems.totalPages;
+				currentCache.total = newItems.total;
+			},
+			forceRefetch({ currentArg, previousArg }) {
+				return currentArg?.page !== previousArg?.page || currentArg?.list !== previousArg?.list;
+			},
+		}),
 		findContact: build.query({
 			query: ({ categoryValue, formalityLevel, interesting, country, query, listId }) => {
 				return {
@@ -109,6 +133,7 @@ export const contactApi = api.injectEndpoints({
 export const {
 	useCreateContactMutation,
 	useGetContactListQuery,
+	useGetPaginatedContactListQuery,
 	useGetContactListsQuery,
 	useImportContactsMutation,
 	useUpdateContactMutation,
