@@ -56,6 +56,14 @@ export const historyApi = api.injectEndpoints({
 				};
 			},
 		}),
+		removeDuplicates: build.mutation({
+			query: ({ batchId }) => {
+				return {
+					method: "DELETE",
+					url: `/history/batch/${batchId}/duplicates`,
+				};
+			},
+		}),
 	}),
 	overrideExisting: true,
 });
@@ -66,4 +74,5 @@ export const {
 	useGetHistoryStatsQuery,
 	useGetInProgressHistoryQuery,
 	useGetEmailsByStatusQuery,
+	useRemoveDuplicatesMutation,
 } = historyApi;

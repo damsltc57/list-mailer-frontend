@@ -28,6 +28,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HistoryIcon from "@mui/icons-material/History";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import DuplicatesModal from "../components/Modals/DuplicatesModal";
+import { useRemoveDuplicatesMutation } from "../store/api/history";
 
 const style = {
 	position: "absolute",
@@ -156,12 +159,26 @@ const SectionHeader = ({ title, onPrev, onNext, showArrows = true }) => (
 const History = () => {
 	const theme = useTheme();
 	const [openModalItem, setOpenModalItem] = useState(null);
+	const [openDuplicatesModal, setOpenDuplicatesModal] = useState(false);
 
-	const { data } = useGetAllHistoryQuery({});
-	const { data: infos } = useGetBatchInfoQuery({ batchId: openModalItem?.id }, { skip: !openModalItem });
+	const { data, refetch: refetchHistory } = useGetAllHistoryQuery({});
+	const { data: infos, refetch: refetchInfos } = useGetBatchInfoQuery({ batchId: openModalItem?.id }, { skip: !openModalItem });
+	const [removeDuplicates, { isLoading: isRemovingDuplicates }] = useRemoveDuplicatesMutation();
 
 	const handleOpen = (email) => setOpenModalItem(email);
 	const handleClose = () => setOpenModalItem(null);
+
+	const handleRemoveDuplicates = async () => {
+		if (!openModalItem) return;
+		try {
+			await removeDuplicates({ batchId: openModalItem.id }).unwrap();
+			setOpenDuplicatesModal(false);
+			refetchInfos();
+			refetchHistory();
+		} catch (error) {
+			console.error("Failed to remove duplicates:", error);
+		}
+	};
 
 	return (
 		<Box sx={{ p: { xs: 2, md: 4 }, bgcolor: theme.palette.mode === "dark" ? "background.default" : "#f8f9fc", minHeight: "100vh" }}>
@@ -243,6 +260,26 @@ const History = () => {
 												>
 													<CheckCircleOutlineIcon sx={{ fontSize: 14, color: "success.main" }} /> ARCHIVÉE
 												</Box>
+												{mail.hasDuplicates && (
+													<Box
+														sx={{
+															position: "absolute",
+															top: 8,
+															right: 8,
+															bgcolor: "warning.light",
+															color: "warning.dark",
+															px: 1,
+															py: 0.5,
+															borderRadius: 1,
+															display: "flex",
+															alignItems: "center",
+															boxShadow: 1,
+														}}
+														title="Des doublons sont présents dans cette liste"
+													>
+														<WarningAmberIcon sx={{ fontSize: 20 }} />
+													</Box>
+												)}
 											</Box>
 
 											<CardContent sx={{ flexGrow: 1 }}>
@@ -350,9 +387,22 @@ const History = () => {
 						</Box>
 					</Box>
 
-					<Typography variant="h6" fontWeight="bold" mb={2}>
-						Liste des destinataires
-					</Typography>
+					<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+						<Typography variant="h6" fontWeight="bold">
+							Liste des destinataires
+						</Typography>
+						{infos?.hasDuplicates && (
+							<Button
+								variant="outlined"
+								color="warning"
+								size="small"
+								startIcon={<WarningAmberIcon />}
+								onClick={() => setOpenDuplicatesModal(true)}
+							>
+								Doublons détectés
+							</Button>
+						)}
+					</Box>
 
 					<Box
 						sx={{
@@ -392,6 +442,14 @@ const History = () => {
 					</Box>
 				</Box>
 			</Modal>
+
+			{/* Duplicates Modal */}
+			<DuplicatesModal
+				open={openDuplicatesModal}
+				onClose={() => setOpenDuplicatesModal(false)}
+				onConfirm={handleRemoveDuplicates}
+				isLoading={isRemovingDuplicates}
+			/>
 		</Box>
 	);
 };
