@@ -15,5 +15,5 @@ export const api = createApi({
 
 	endpoints: () => ({}),
 	reducerPath: "api",
-	tagTypes: [""],
+	tagTypes: ["", "TestMailHistory", "GlobalSettings"],
 });

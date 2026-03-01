@@ -29,6 +29,8 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HistoryIcon from "@mui/icons-material/History";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+import PendingIcon from "@mui/icons-material/Pending";
 import DuplicatesModal from "../components/Modals/DuplicatesModal";
 import { useRemoveDuplicatesMutation } from "../store/api/history";
 
@@ -156,6 +158,30 @@ const SectionHeader = ({ title, onPrev, onNext, showArrows = true }) => (
 	</Box>
 );
 
+const getStatusDisplay = (status) => {
+	switch (status) {
+		case "EN ATTENTE":
+			return {
+				icon: <PendingIcon sx={{ fontSize: 14, color: "warning.main" }} />,
+				text: "EN ATTENTE",
+				color: "warning.main",
+			};
+		case "EN COURS":
+			return {
+				icon: <AutorenewIcon sx={{ fontSize: 14, color: "info.main", animation: "spin 2s linear infinite" }} />,
+				text: "EN COURS",
+				color: "info.main",
+			};
+		case "ARCHIVÉE":
+		default:
+			return {
+				icon: <CheckCircleOutlineIcon sx={{ fontSize: 14, color: "success.main" }} />,
+				text: "ARCHIVÉE",
+				color: "text.secondary",
+			};
+	}
+};
+
 const History = () => {
 	const theme = useTheme();
 	const [openModalItem, setOpenModalItem] = useState(null);
@@ -240,26 +266,31 @@ const History = () => {
 												}}
 											>
 												<HistoryIcon sx={{ fontSize: 60, color: "grey.300" }} />
-												<Box
-													sx={{
-														position: "absolute",
-														bottom: 8,
-														left: 8,
-														bgcolor: "common.white",
-														px: 1,
-														py: 0.5,
-														borderRadius: 1,
-														fontSize: "0.75rem",
-														fontWeight: "bold",
-														display: "flex",
-														alignItems: "center",
-														gap: 0.5,
-														color: "text.secondary",
-														boxShadow: 1,
-													}}
-												>
-													<CheckCircleOutlineIcon sx={{ fontSize: 14, color: "success.main" }} /> ARCHIVÉE
-												</Box>
+												{(() => {
+													const statusDisplay = getStatusDisplay(mail.campaignStatus || "ARCHIVÉE");
+													return (
+														<Box
+															sx={{
+																position: "absolute",
+																bottom: 8,
+																left: 8,
+																bgcolor: "common.white",
+																px: 1,
+																py: 0.5,
+																borderRadius: 1,
+																fontSize: "0.75rem",
+																fontWeight: "bold",
+																display: "flex",
+																alignItems: "center",
+																gap: 0.5,
+																color: statusDisplay.color,
+																boxShadow: 1,
+															}}
+														>
+															{statusDisplay.icon} {statusDisplay.text}
+														</Box>
+													);
+												})()}
 												{mail.hasDuplicates && (
 													<Box
 														sx={{
@@ -450,6 +481,15 @@ const History = () => {
 				onConfirm={handleRemoveDuplicates}
 				isLoading={isRemovingDuplicates}
 			/>
+
+			<style>
+				{`
+					@keyframes spin {
+						0% { transform: rotate(0deg); }
+						100% { transform: rotate(360deg); }
+					}
+				`}
+			</style>
 		</Box>
 	);
 };

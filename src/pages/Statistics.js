@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useGetHistoryStatsQuery, useGetInProgressHistoryQuery, useGetBatchInfoQuery } from "../store/api/history";
+import { useGetGlobalSettingsQuery, useUpdateGlobalSettingsMutation } from "../store/api/settings";
 import StatusEmailsModal from "../components/statistics/StatusEmailsModal";
 import {
     Box,
@@ -34,6 +35,7 @@ import SpeedIcon from "@mui/icons-material/Speed";
 import EmailIcon from "@mui/icons-material/Email";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import PendingIcon from "@mui/icons-material/Pending";
 
 const style = {
     position: "absolute",
@@ -81,6 +83,30 @@ function Row(props) {
         </React.Fragment>
     );
 }
+
+const getStatusDisplay = (status) => {
+    switch (status) {
+        case "EN ATTENTE":
+            return {
+                icon: <PendingIcon sx={{ fontSize: 14, color: "warning.main" }} />,
+                text: "EN ATTENTE",
+                color: "warning.main",
+            };
+        case "EN COURS":
+            return {
+                icon: <AutorenewIcon sx={{ fontSize: 14, color: "info.main", animation: "spin 2s linear infinite" }} />,
+                text: "EN COURS",
+                color: "info.main",
+            };
+        case "ARCHIVÉE":
+        default:
+            return {
+                icon: <CheckCircleOutlineIcon sx={{ fontSize: 14, color: "success.main" }} />,
+                text: "ARCHIVÉE",
+                color: "text.secondary",
+            };
+    }
+};
 
 const Banner = () => {
     const theme = useTheme();
@@ -218,6 +244,24 @@ const SectionHeader = ({ title, onPrev, onNext, showArrows = true }) => (
 const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate }) => {
     const theme = useTheme();
 
+    // Manage Global Settings
+    const { data: globalSettings } = useGetGlobalSettingsQuery();
+    const [updateSettings, { isLoading: isUpdatingSettings }] = useUpdateGlobalSettingsMutation();
+    const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+    const [batchLimitValue, setBatchLimitValue] = useState("");
+
+    const handleSaveLimit = async () => {
+        if (!batchLimitValue || isNaN(batchLimitValue)) return;
+        try {
+            await updateSettings({ batchLimit: parseInt(batchLimitValue) }).unwrap();
+            setIsBatchModalOpen(false);
+        } catch (error) {
+            console.error("Failed to update limit", error);
+        }
+    };
+
+    const currentBatchLimit = globalSettings?.batchLimit || 5;
+
     return (
         <Paper
             elevation={0}
@@ -332,9 +376,9 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
 
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     {[
-                        { label: "Par minute", value: "0.5", total: 1 },
-                        { label: "Par heure", value: "30", total: 60 },
-                        { label: "Par jour", value: "720", total: 1440 },
+                        { label: "Par minute", value: (currentBatchLimit / 10).toFixed(1), total: 10 },
+                        { label: "Par heure", value: currentBatchLimit * 6, total: 300 },
+                        { label: "Par jour", value: currentBatchLimit * 6 * 24, total: 7200 },
                     ].map((item, index) => (
                         <Box key={index}>
                             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
@@ -347,7 +391,7 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
                             </Box>
                             <LinearProgress
                                 variant="determinate"
-                                value={(parseFloat(item.value) / item.total) * 100}
+                                value={Math.min((parseFloat(item.value) / item.total) * 100, 100)}
                                 sx={{
                                     height: 8,
                                     borderRadius: 4,
@@ -362,10 +406,60 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
                     ))}
                 </Box>
 
-                <Typography variant="caption" color="textSecondary" sx={{ mt: 3, display: "block", textAlign: "center", bgcolor: "grey.50", p: 1, borderRadius: 2, border: "1px dashed", borderColor: "divider" }}>
-                    Rythme : <strong>5 emails</strong> envoyés toutes les <strong>10 minutes</strong>.
-                </Typography>
+                <Box sx={{ mt: 3, textAlign: "center", bgcolor: "grey.50", p: 2, borderRadius: 2, border: "1px dashed", borderColor: "divider" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}>
+                        <Typography variant="caption" color="textSecondary">
+                            Rythme : <strong>{currentBatchLimit} emails</strong> toutes les <strong>10 minutes</strong>.
+                        </Typography>
+                        <Button size="small" variant="text" sx={{ p: 0, minWidth: 30 }} onClick={() => { setBatchLimitValue(currentBatchLimit); setIsBatchModalOpen(true); }}>Modifier</Button>
+                    </Box>
+                </Box>
             </Box>
+
+            {/* Batch Size Edit Modal */}
+            <Modal
+                open={isBatchModalOpen}
+                onClose={() => setIsBatchModalOpen(false)}
+                aria-labelledby="batch-modal-title"
+                aria-describedby="batch-modal-description"
+            >
+                <Box sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: 400,
+                    bgcolor: "background.paper",
+                    borderRadius: 3,
+                    boxShadow: 24,
+                    p: 4,
+                }}>
+                    <Typography id="batch-modal-title" variant="h6" fontWeight="bold" mb={2}>
+                        Modifier la vitesse d'envoi
+                    </Typography>
+                    <Typography id="batch-modal-description" variant="body2" color="textSecondary" mb={3}>
+                        Vous êtes sur le point de modifier la taille du lot (Batch Size) global de l'application.
+                        Ceci déterminera combien d'emails sont expédiés toutes les 10 minutes pour **toutes les campagnes en cours**.
+                        Cette action n'affectera aucun autre paramètre.
+                    </Typography>
+
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                        <TextField
+                            fullWidth
+                            label="Taille du lot (Batch Size)"
+                            type="number"
+                            value={batchLimitValue}
+                            onChange={(e) => setBatchLimitValue(e.target.value)}
+                            InputProps={{ inputProps: { min: 1 } }}
+                            helperText={`Rythme total: ${(batchLimitValue || currentBatchLimit) * 6} emails par heure.`}
+                        />
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                            <Button variant="text" onClick={() => setIsBatchModalOpen(false)}>Annuler</Button>
+                            <Button variant="contained" disabled={isUpdatingSettings} onClick={handleSaveLimit}>Enregistrer</Button>
+                        </Box>
+                    </Box>
+                </Box>
+            </Modal>
         </Paper>
     );
 };
@@ -377,6 +471,8 @@ const Statistics = () => {
     const [openModalItem, setOpenModalItem] = useState(null);
     const [statusModal, setStatusModal] = useState(null);
 
+    const { data: globalSettings } = useGetGlobalSettingsQuery();
+
     const { data: statsData } = useGetHistoryStatsQuery({ startDate, endDate });
     const { data: inProgressData } = useGetInProgressHistoryQuery();
     const { data: infos } = useGetBatchInfoQuery({ batchId: openModalItem?.id }, { skip: !openModalItem });
@@ -384,8 +480,9 @@ const Statistics = () => {
     const handleOpen = (email) => setOpenModalItem(email);
     const handleClose = () => setOpenModalItem(null);
 
+    const currentBatchLimit = globalSettings?.batchLimit || 5;
     const pendingCount = statsData?.pendingEmails || 0;
-    const remainingTotalMinutes = Math.ceil((pendingCount / 5) * 10);
+    const remainingTotalMinutes = Math.ceil((pendingCount / currentBatchLimit) * 10);
     const remainingHours = Math.floor(remainingTotalMinutes / 60);
     const remainingMins = remainingTotalMinutes % 60;
 
@@ -421,7 +518,7 @@ const Statistics = () => {
                         />
                         <HeaderStatChip
                             title="Estim. Journalière"
-                            value="720 emails"
+                            value={`${currentBatchLimit * 6 * 24} emails`}
                             icon={<SpeedIcon />}
                             color="info"
                         />
@@ -514,26 +611,31 @@ const Statistics = () => {
                                                 }}
                                             >
                                                 <EmailIcon sx={{ fontSize: 60, color: "grey.300" }} />
-                                                <Box
-                                                    sx={{
-                                                        position: "absolute",
-                                                        bottom: 8,
-                                                        left: 8,
-                                                        bgcolor: "common.white",
-                                                        px: 1,
-                                                        py: 0.5,
-                                                        borderRadius: 1,
-                                                        fontSize: "0.75rem",
-                                                        fontWeight: "bold",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        gap: 0.5,
-                                                        color: "warning.main",
-                                                        boxShadow: 1,
-                                                    }}
-                                                >
-                                                    <AutorenewIcon sx={{ fontSize: 14, animation: "spin 2s linear infinite" }} /> EN COURS
-                                                </Box>
+                                                {(() => {
+                                                    const statusDisplay = getStatusDisplay(mail.campaignStatus || "EN COURS");
+                                                    return (
+                                                        <Box
+                                                            sx={{
+                                                                position: "absolute",
+                                                                bottom: 8,
+                                                                left: 8,
+                                                                bgcolor: "common.white",
+                                                                px: 1,
+                                                                py: 0.5,
+                                                                borderRadius: 1,
+                                                                fontSize: "0.75rem",
+                                                                fontWeight: "bold",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                gap: 0.5,
+                                                                color: statusDisplay.color,
+                                                                boxShadow: 1,
+                                                            }}
+                                                        >
+                                                            {statusDisplay.icon} {statusDisplay.text}
+                                                        </Box>
+                                                    );
+                                                })()}
                                             </Box>
 
                                             <CardContent sx={{ flexGrow: 1 }}>

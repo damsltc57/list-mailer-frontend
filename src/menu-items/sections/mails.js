@@ -1,6 +1,7 @@
 import MailIcon from "@mui/icons-material/Mail";
 import HistoryIcon from "@mui/icons-material/History";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import ScienceIcon from "@mui/icons-material/Science";
 
 const mails = {
 	id: "group-orders",
@@ -31,6 +32,14 @@ const mails = {
 			icon: BarChartIcon,
 			breadcrumbs: false,
 		},
+		{
+			id: "tests",
+			title: "Tests de mails",
+			type: "item",
+			url: "/test-mails",
+			icon: ScienceIcon,
+			breadcrumbs: false,
+		}
 	],
 };
 

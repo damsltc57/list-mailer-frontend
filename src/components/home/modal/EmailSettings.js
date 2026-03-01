@@ -11,6 +11,7 @@ import DKIMInfo from "./DKIMInfo";
 const EmailSettings = ({ email, refetchUserList }) => {
 	const [emailAddr, setEmailAddr] = React.useState(email?.email || "");
 	const [emailNickname, setEmailNickName] = React.useState(email?.emailNickname || "");
+	const [user, setUser] = React.useState(email?.user || "");
 	const [host, setHost] = React.useState(email?.host || "");
 	const [port, setPort] = React.useState(email?.port || 0);
 	const [password, setPassword] = React.useState(email?.pass || "");
@@ -37,6 +38,7 @@ const EmailSettings = ({ email, refetchUserList }) => {
 			addressId: email?.id,
 			email: emailAddr,
 			emailNickname,
+			user,
 			host,
 			port,
 			pass: password,
@@ -72,6 +74,16 @@ const EmailSettings = ({ email, refetchUserList }) => {
 				value={emailNickname}
 				onChange={(event) => {
 					setEmailNickName(event.target.value);
+				}}
+			/>
+			<TextField
+				fullWidth
+				id="outlined-controlled"
+				label="Nom d'utilisateur SMTP (Optionnel)"
+				value={user}
+				placeholder={emailAddr}
+				onChange={(event) => {
+					setUser(event.target.value);
 				}}
 			/>
 			<TextField

@@ -48,12 +48,27 @@ export const historyApi = api.injectEndpoints({
 			},
 		}),
 		getEmailsByStatus: build.query({
-			query: ({ status }) => {
+			query: ({ status, page = 1, limit = 500 }) => {
 				return {
 					method: "GET",
-					url: `/history/contacts-by-status?status=${status}`,
+					url: `/history/contacts-by-status?status=${status}&page=${page}&limit=${limit}`,
 					headers: {},
 				};
+			},
+			// Always merge incoming data to the cache data
+			serializeQueryArgs: ({ queryArgs }) => {
+				return `${queryArgs.status}`;
+			},
+			merge: (currentCache, newItems, { arg }) => {
+				if (arg.page === 1) {
+					return newItems;
+				}
+				currentCache.data.push(...newItems.data);
+				currentCache.total = newItems.total;
+				return currentCache;
+			},
+			forceRefetch({ currentArg, previousArg }) {
+				return currentArg?.page !== previousArg?.page || currentArg?.status !== previousArg?.status;
 			},
 		}),
 		removeDuplicates: build.mutation({

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Box,
     Modal,
@@ -14,6 +14,7 @@ import {
     CircularProgress,
 } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import dayjs from "dayjs";
 import { useGetEmailsByStatusQuery } from "../../store/api/history";
 
 const modalStyle = {
@@ -39,12 +40,31 @@ const titleMap = {
 
 const StatusEmailsModal = ({ open, handleClose, statusParam }) => {
     const theme = useTheme();
+    const [page, setPage] = useState(1);
+    const scrollContainerRef = useRef(null);
+
+    // Reset page when modal opens/changes status
+    useEffect(() => {
+        if (open) {
+            setPage(1);
+        }
+    }, [open, statusParam]);
 
     // Only fetch when the modal is open and we have a valid statusParam
-    const { data: emails, isLoading, isFetching } = useGetEmailsByStatusQuery(
-        { status: statusParam },
+    const { data, isLoading, isFetching } = useGetEmailsByStatusQuery(
+        { status: statusParam, page, limit: 500 },
         { skip: !open || !statusParam }
     );
+
+    const emails = data?.data || [];
+    const total = data?.total || 0;
+
+    const handleScroll = (e) => {
+        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (bottom && emails.length < total && !isFetching) {
+            setPage((prev) => prev + 1);
+        }
+    };
 
     const title = statusParam ? titleMap[statusParam] || `Liste des contacts (${statusParam})` : "Détails";
 
@@ -61,11 +81,13 @@ const StatusEmailsModal = ({ open, handleClose, statusParam }) => {
                         {title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {emails?.length || 0} résultat(s)
+                        {total} résultat(s)
                     </Typography>
                 </Box>
 
                 <Box
+                    ref={scrollContainerRef}
+                    onScroll={handleScroll}
                     sx={{
                         overflow: "auto",
                         maxHeight: "65vh",
@@ -83,6 +105,9 @@ const StatusEmailsModal = ({ open, handleClose, statusParam }) => {
                                     )}
                                     <TableCell align="left" sx={{ fontWeight: "bold", bgcolor: "grey.50" }}>
                                         Email
+                                    </TableCell>
+                                    <TableCell align="left" sx={{ fontWeight: "bold", bgcolor: "grey.50" }}>
+                                        Date
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: "bold", bgcolor: "grey.50" }}>
                                         Statut
@@ -115,6 +140,11 @@ const StatusEmailsModal = ({ open, handleClose, statusParam }) => {
                                                     </Typography>
                                                 )}
                                             </TableCell>
+                                            <TableCell align="left">
+                                                <Typography variant="body2" color="textSecondary">
+                                                    {row.updatedAt ? dayjs(row.updatedAt).format("DD/MM/YYYY HH:mm") : "-"}
+                                                </Typography>
+                                            </TableCell>
                                             <TableCell align="right">
                                                 <Typography
                                                     variant="caption"
@@ -143,9 +173,17 @@ const StatusEmailsModal = ({ open, handleClose, statusParam }) => {
                                             </TableCell>
                                         </TableRow>
                                     ))
-                                ) : (
+                                ) : null}
+                                {isFetching && emails?.length > 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={statusParam === "error" ? 3 : 2} align="center" sx={{ py: 4, color: "text.secondary" }}>
+                                        <TableCell colSpan={statusParam === "error" ? 4 : 3} align="center" sx={{ py: 2 }}>
+                                            <CircularProgress size={20} sx={{ color: theme.palette.primary.main }} />
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                                {!isLoading && !isFetching && (!emails || emails.length === 0) && (
+                                    <TableRow>
+                                        <TableCell colSpan={statusParam === "error" ? 4 : 3} align="center" sx={{ py: 4, color: "text.secondary" }}>
                                             Aucun email trouvé pour ce statut.
                                         </TableCell>
                                     </TableRow>

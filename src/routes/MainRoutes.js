@@ -8,6 +8,8 @@ const ContactListPage = Loadable(lazy(() => import("pages/ContactList")));
 const OAuthCallback = Loadable(lazy(() => import("pages/OAuthCallback")));
 const HistoryPage = Loadable(lazy(() => import("pages/History")));
 const StatisticsPage = Loadable(lazy(() => import("pages/Statistics")));
+const TestMailHistoryPage = Loadable(lazy(() => import("pages/TestMailHistory")));
+const TestMailNewPage = Loadable(lazy(() => import("pages/TestMailNew")));
 
 const MainRoutes = {
 	path: "/",
@@ -18,6 +20,8 @@ const MainRoutes = {
 		{ path: "/oauth2callback", index: true, element: <OAuthCallback /> },
 		{ path: "/historique", index: true, element: <HistoryPage /> },
 		{ path: "/statistiques", index: true, element: <StatisticsPage /> },
+		{ path: "/test-mails", index: true, element: <TestMailHistoryPage /> },
+		{ path: "/test-mails/new", index: true, element: <TestMailNewPage /> },
 	],
 };
 
