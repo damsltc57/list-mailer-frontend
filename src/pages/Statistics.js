@@ -235,17 +235,17 @@ const AdvancedEmailBarChart = () => {
     const [groupBy, setGroupBy] = useState("hour");
     const [referenceDate, setReferenceDate] = useState(dayjs());
 
-    let computedStartDate = referenceDate.startOf('day').format('YYYY-MM-DD');
-    let computedEndDate = referenceDate.endOf('day').format('YYYY-MM-DD');
+    let computedStartDate = referenceDate.startOf('day').toISOString();
+    let computedEndDate = referenceDate.endOf('day').toISOString();
     let dateLabel = referenceDate.format("D MMMM YYYY");
 
     if (groupBy === 'day') {
-        computedStartDate = referenceDate.startOf('month').format('YYYY-MM-DD');
-        computedEndDate = referenceDate.endOf('month').format('YYYY-MM-DD');
+        computedStartDate = referenceDate.startOf('month').toISOString();
+        computedEndDate = referenceDate.endOf('month').toISOString();
         dateLabel = referenceDate.format("MMMM YYYY");
     } else if (groupBy === 'month') {
-        computedStartDate = referenceDate.startOf('year').format('YYYY-MM-DD');
-        computedEndDate = referenceDate.endOf('year').format('YYYY-MM-DD');
+        computedStartDate = referenceDate.startOf('year').toISOString();
+        computedEndDate = referenceDate.endOf('year').toISOString();
         dateLabel = referenceDate.format("YYYY");
     }
 
