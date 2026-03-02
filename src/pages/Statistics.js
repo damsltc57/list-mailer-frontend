@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useGetHistoryStatsQuery, useGetInProgressHistoryQuery, useGetBatchInfoQuery } from "../store/api/history";
+import React, { useState, useMemo } from "react";
+import { useGetHistoryStatsQuery, useGetHistoryChartStatsQuery, useGetInProgressHistoryQuery, useGetBatchInfoQuery } from "../store/api/history";
 import { useGetGlobalSettingsQuery, useUpdateGlobalSettingsMutation } from "../store/api/settings";
 import StatusEmailsModal from "../components/statistics/StatusEmailsModal";
 import {
@@ -25,8 +25,13 @@ import {
     Button,
     IconButton,
     LinearProgress,
+    ToggleButtonGroup,
+    ToggleButton,
+    CircularProgress,
 } from "@mui/material";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from "recharts";
 import dayjs from "dayjs";
+import "dayjs/locale/fr";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -36,6 +41,8 @@ import EmailIcon from "@mui/icons-material/Email";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import PendingIcon from "@mui/icons-material/Pending";
+
+dayjs.locale('fr');
 
 const style = {
     position: "absolute",
@@ -222,6 +229,153 @@ const HeaderStatChip = ({ icon, title, value, color, onClick, subtitle }) => (
         </IconButton>
     </Paper>
 );
+
+const AdvancedEmailBarChart = () => {
+    const theme = useTheme();
+    const [groupBy, setGroupBy] = useState("hour");
+    const [referenceDate, setReferenceDate] = useState(dayjs());
+
+    let computedStartDate = referenceDate.startOf('day').format('YYYY-MM-DD');
+    let computedEndDate = referenceDate.endOf('day').format('YYYY-MM-DD');
+    let dateLabel = referenceDate.format("D MMMM YYYY");
+
+    if (groupBy === 'day') {
+        computedStartDate = referenceDate.startOf('month').format('YYYY-MM-DD');
+        computedEndDate = referenceDate.endOf('month').format('YYYY-MM-DD');
+        dateLabel = referenceDate.format("MMMM YYYY");
+    } else if (groupBy === 'month') {
+        computedStartDate = referenceDate.startOf('year').format('YYYY-MM-DD');
+        computedEndDate = referenceDate.endOf('year').format('YYYY-MM-DD');
+        dateLabel = referenceDate.format("YYYY");
+    }
+
+    const { data: chartData, isFetching } = useGetHistoryChartStatsQuery({
+        startDate: computedStartDate,
+        endDate: computedEndDate,
+        groupBy
+    });
+
+    const handleGroupByChange = (event, newGroupBy) => {
+        if (newGroupBy !== null) {
+            setGroupBy(newGroupBy);
+            setReferenceDate(dayjs());
+        }
+    };
+
+    const handlePrev = () => {
+        if (groupBy === "hour") setReferenceDate(prev => prev.subtract(1, 'day'));
+        else if (groupBy === "day") setReferenceDate(prev => prev.subtract(1, 'month'));
+        else if (groupBy === "month") setReferenceDate(prev => prev.subtract(1, 'year'));
+    };
+
+    const handleNext = () => {
+        if (groupBy === "hour") setReferenceDate(prev => prev.add(1, 'day'));
+        else if (groupBy === "day") setReferenceDate(prev => prev.add(1, 'month'));
+        else if (groupBy === "month") setReferenceDate(prev => prev.add(1, 'year'));
+    };
+
+    const formatXAxis = (tickItem) => {
+        if (!tickItem) return "";
+        const date = dayjs(tickItem);
+        if (groupBy === "hour") return date.format("HH:mm");
+        if (groupBy === "day") return date.format("DD/MM");
+        if (groupBy === "month") return date.format("MMMM YY");
+        return tickItem;
+    };
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            const date = dayjs(label);
+            let timeContext = "";
+            let explicitContext = "";
+            if (groupBy === "hour") { timeContext = date.format("DD MMMM YYYY"); explicitContext = "Envoi vers " + date.format("HH:mm"); }
+            else if (groupBy === "day") { timeContext = date.format("dddd DD MMMM YYYY"); explicitContext = "Cumul journalier"; }
+            else if (groupBy === "month") { timeContext = date.format("MMMM YYYY"); explicitContext = "Cumul mensuel"; }
+            return (
+                <Box sx={{ bgcolor: "background.paper", p: 2, border: "1px solid", borderColor: "divider", borderRadius: 2, boxShadow: 3 }}>
+                    <Typography variant="subtitle2" fontWeight="bold">{timeContext}</Typography>
+                    <Typography variant="caption" color="textSecondary" sx={{ mb: 1, display: "block" }}>{explicitContext}</Typography>
+                    <Divider sx={{ my: 1 }} />
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                        {payload.map((entry, index) => (
+                            <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: entry.color }} />
+                                <Typography variant="body2" sx={{ mr: 2 }}>{entry.name}:</Typography>
+                                <Typography variant="body2" fontWeight="bold">{entry.value}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Box>
+            );
+        }
+        return null;
+    };
+
+    return (
+        <Paper
+            elevation={0}
+            sx={{
+                p: { xs: 2, md: 3 },
+                borderRadius: 4,
+                border: "1px solid",
+                borderColor: "divider",
+                mb: 4,
+                display: "flex",
+                flexDirection: "column",
+                height: 400,
+            }}
+        >
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 3 }}>
+                <Box>
+                    <Typography variant="h6" fontWeight="bold">
+                        Repartition des Envois
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Analyse temporelle des statuts de delivrabilite
+                    </Typography>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <IconButton size="small" onClick={handlePrev}><ChevronLeftIcon /></IconButton>
+                        <Typography variant="body2" fontWeight="medium" sx={{ minWidth: 130, textAlign: "center", textTransform: "capitalize" }}>
+                            {dateLabel}
+                        </Typography>
+                        <IconButton size="small" onClick={handleNext}><ChevronRightIcon /></IconButton>
+                    </Box>
+                    <ToggleButtonGroup value={groupBy} exclusive onChange={handleGroupByChange} aria-label="Granularite temps" size="small">
+                        <ToggleButton value="hour" aria-label="Heure">Heure</ToggleButton>
+                        <ToggleButton value="day" aria-label="Jour">Jour</ToggleButton>
+                        <ToggleButton value="month" aria-label="Mois">Mois</ToggleButton>
+                    </ToggleButtonGroup>
+                </Box>
+            </Box>
+
+            <Box sx={{ flexGrow: 1, width: "100%", position: "relative" }}>
+                {isFetching ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                        <CircularProgress />
+                    </Box>
+                ) : chartData && chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }} barGap={2}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme.palette.divider} />
+                            <XAxis dataKey="time" tickFormatter={formatXAxis} tick={{ fontSize: 12, fill: theme.palette.text.secondary }} tickMargin={10} axisLine={false} tickLine={false} />
+                            <YAxis tick={{ fontSize: 12, fill: theme.palette.text.secondary }} axisLine={false} tickLine={false} />
+                            <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                            <Bar dataKey="sent" name="Succes" fill={theme.palette.success.main} radius={[4, 4, 0, 0]} maxBarSize={40} />
+                            <Bar dataKey="error" name="Erreurs" fill={theme.palette.error.main} radius={[4, 4, 0, 0]} maxBarSize={40} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", bgcolor: "grey.50", borderRadius: 2, border: "1px dashed", borderColor: "divider" }}>
+                        <Typography color="textSecondary">Aucune donnee sur cette periode.</Typography>
+                    </Box>
+                )}
+            </Box>
+        </Paper>
+    );
+};
 
 const SectionHeader = ({ title, onPrev, onNext, showArrows = true }) => (
     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
@@ -555,6 +709,8 @@ const Statistics = () => {
                             onClick={() => setStatusModal("error")}
                         />
                     </Box>
+
+                    <AdvancedEmailBarChart />
 
                     <SectionHeader title="Campagnes en cours" showArrows={true} />
 

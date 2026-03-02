@@ -25,6 +25,7 @@ import GridPreviewSelectedContacts from "./GridPreviewSelectedContacts";
 import DialogContent from "@mui/material/DialogContent";
 import { useDispatch, useSelector } from "react-redux";
 import { addMultipleContacts, getSelectedContacts, resetContacts } from "../../store/reducers/contactSlice";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -78,8 +79,21 @@ const ContactSelectionContent = () => {
 		listId: selectedList,
 	});
 
-	const handleListChange = (event) => {
-		setSelectedList(event.target.value);
+	const listOptions = React.useMemo(() => {
+		const baseOptions = [
+			{ id: -1, name: "Aucune" },
+			{ id: 0, name: "Toutes" },
+		];
+		if (contactList) {
+			return [...baseOptions, ...contactList.map((list) => ({ id: list.id, name: list.name }))];
+		}
+		return baseOptions;
+	}, [contactList]);
+
+	const selectedListOption = listOptions.find((opt) => opt.id === selectedList) || listOptions[0];
+
+	const handleListChange = (event, newValue) => {
+		setSelectedList(newValue ? newValue.id : -1);
 	};
 
 	const handleCategoryChange = (event) => {
@@ -269,23 +283,17 @@ const ContactSelectionContent = () => {
 				{/*		))}*/}
 				{/*	</Select>*/}
 				{/*</FormControl>*/}
-				<FormControl sx={{ m: 1, width: 200 }}>
-					<InputLabel id="demo-simple-select-label">Liste</InputLabel>
-					<Select
-						labelId="demo-simple-select-label"
-						id="demo-simple-select"
-						value={selectedList}
-						label="Age"
+				<FormControl sx={{ m: 1, width: 250 }}>
+					<Autocomplete
+						disablePortal
+						id="combo-box-demo"
+						options={listOptions}
+						getOptionLabel={(option) => option.name}
+						value={selectedListOption}
 						onChange={handleListChange}
-					>
-						<MenuItem value={-1}>Aucune</MenuItem>
-						<MenuItem value={0}>Toutes</MenuItem>
-						{contactList?.map((list) => (
-							<MenuItem key={list.id} value={list.id}>
-								{list.name}
-							</MenuItem>
-						))}
-					</Select>
+						isOptionEqualToValue={(option, value) => option.id === value?.id}
+						renderInput={(params) => <TextField {...params} label="Liste" />}
+					/>
 				</FormControl>
 				{/*<FormControl sx={{ m: 1, width: 200 }}>*/}
 				{/*	<Button variant={"outlined"} onClick={onSelectAllPressed}>*/}

@@ -38,6 +38,25 @@ export const historyApi = api.injectEndpoints({
 				};
 			},
 		}),
+		getHistoryChartStats: build.query({
+			query: ({ startDate, endDate, groupBy = "hour" } = {}) => {
+				let url = `/history/stats/chart`;
+				const params = new URLSearchParams();
+				if (startDate) params.append("startDate", startDate);
+				if (endDate) params.append("endDate", endDate);
+				if (groupBy) params.append("groupBy", groupBy);
+				const queryString = params.toString();
+				if (queryString) {
+					url += `?${queryString}`;
+				}
+
+				return {
+					method: "GET",
+					url,
+					headers: {},
+				};
+			},
+		}),
 		getInProgressHistory: build.query({
 			query: () => {
 				return {
@@ -87,6 +106,7 @@ export const {
 	useGetAllHistoryQuery,
 	useGetBatchInfoQuery,
 	useGetHistoryStatsQuery,
+	useGetHistoryChartStatsQuery,
 	useGetInProgressHistoryQuery,
 	useGetEmailsByStatusQuery,
 	useRemoveDuplicatesMutation,

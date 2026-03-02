@@ -2,6 +2,8 @@ import MailIcon from "@mui/icons-material/Mail";
 import HistoryIcon from "@mui/icons-material/History";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import ScienceIcon from "@mui/icons-material/Science";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 const mails = {
 	id: "group-orders",
@@ -10,10 +12,18 @@ const mails = {
 	children: [
 		{
 			id: "accueil",
-			title: "Accueil",
+			title: "Tableau de Bord",
 			type: "item",
 			url: "/",
-			icon: MailIcon,
+			icon: DashboardIcon,
+			breadcrumbs: false,
+		},
+		{
+			id: "nouvelle-campagne",
+			title: "Nouvelle Campagne",
+			type: "item",
+			url: "/nouvelle-campagne",
+			icon: AddBoxIcon,
 			breadcrumbs: false,
 		},
 		{
