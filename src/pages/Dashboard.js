@@ -20,7 +20,9 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import PendingIcon from "@mui/icons-material/Pending";
 import EmailIcon from "@mui/icons-material/Email";
+import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 import { useGetAllHistoryQuery, useGetHistoryStatsQuery, useGetInProgressHistoryQuery } from "../store/api/history";
+import { useGetGlobalSettingsQuery } from "../store/api/settings";
 
 const getStatusDisplay = (status) => {
     switch (status) {
@@ -116,6 +118,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     // Data fetching
+    const { data: globalSettings } = useGetGlobalSettingsQuery();
     const { data: statsData } = useGetHistoryStatsQuery({});
     const { data: allHistoryData } = useGetAllHistoryQuery({}, { pollingInterval: 10000 });
     const { data: inProgressData } = useGetInProgressHistoryQuery(undefined, {
@@ -233,6 +236,45 @@ const Dashboard = () => {
                 </Grid>
 
                 {/* ---------- System Alerts ---------- */}
+                {globalSettings?.isPaused && (
+                    <Grid item xs={12}>
+                        <Card
+                            sx={{
+                                borderRadius: 4,
+                                bgcolor: "error.light",
+                                color: "error.dark",
+                                border: "1px solid",
+                                borderColor: "error.main",
+                                p: 2,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                boxShadow: theme.shadows[1],
+                            }}
+                        >
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                <PauseCircleOutlineIcon sx={{ fontSize: 40 }} />
+                                <Box>
+                                    <Typography variant="h6" fontWeight="bold">
+                                        Envois actuellement en pause
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Le système d'envoi de masse a été suspendu manuellement. Aucune campagne ne sera expédiée pour le moment.
+                                    </Typography>
+                                </Box>
+                            </Box>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={() => navigate("/statistiques")}
+                                sx={{ fontWeight: "bold", borderRadius: 2 }}
+                            >
+                                Gérer
+                            </Button>
+                        </Card>
+                    </Grid>
+                )}
+
                 {hasGlobalDuplicates && (
                     <Grid item xs={12}>
                         <Card

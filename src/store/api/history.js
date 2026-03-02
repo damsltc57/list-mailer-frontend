@@ -10,6 +10,7 @@ export const historyApi = api.injectEndpoints({
 					headers: {},
 				};
 			},
+			providesTags: ["TestMailHistory"],
 		}),
 		getBatchInfo: build.query({
 			query: ({ batchId }) => {
@@ -37,6 +38,7 @@ export const historyApi = api.injectEndpoints({
 					headers: {},
 				};
 			},
+			providesTags: ["HistoryStats"],
 		}),
 		getHistoryChartStats: build.query({
 			query: ({ startDate, endDate, groupBy = "hour" } = {}) => {
@@ -56,6 +58,7 @@ export const historyApi = api.injectEndpoints({
 					headers: {},
 				};
 			},
+			providesTags: ["HistoryStats"],
 		}),
 		getInProgressHistory: build.query({
 			query: () => {
@@ -89,6 +92,7 @@ export const historyApi = api.injectEndpoints({
 			forceRefetch({ currentArg, previousArg }) {
 				return currentArg?.page !== previousArg?.page || currentArg?.status !== previousArg?.status;
 			},
+			providesTags: (result, error, arg) => [{ type: "EmailsByStatus", id: arg.status }],
 		}),
 		removeDuplicates: build.mutation({
 			query: ({ batchId }) => {
@@ -97,6 +101,16 @@ export const historyApi = api.injectEndpoints({
 					url: `/history/batch/${batchId}/duplicates`,
 				};
 			},
+		}),
+		requeueContacts: build.mutation({
+			query: ({ ids }) => {
+				return {
+					method: "POST",
+					url: `/history/contacts-requeue`,
+					body: { ids }
+				}
+			},
+			invalidatesTags: ["TestMailHistory", "HistoryStats", { type: "EmailsByStatus", id: "error" }, { type: "EmailsByStatus", id: "pending" }],
 		}),
 	}),
 	overrideExisting: true,
@@ -110,4 +124,5 @@ export const {
 	useGetInProgressHistoryQuery,
 	useGetEmailsByStatusQuery,
 	useRemoveDuplicatesMutation,
+	useRequeueContactsMutation,
 } = historyApi;

@@ -41,6 +41,8 @@ import EmailIcon from "@mui/icons-material/Email";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import PendingIcon from "@mui/icons-material/Pending";
+import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 
 dayjs.locale('fr');
 
@@ -402,6 +404,7 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
     const { data: globalSettings } = useGetGlobalSettingsQuery();
     const [updateSettings, { isLoading: isUpdatingSettings }] = useUpdateGlobalSettingsMutation();
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+    const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
     const [batchLimitValue, setBatchLimitValue] = useState("");
 
     const handleSaveLimit = async () => {
@@ -568,7 +571,67 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
                         <Button size="small" variant="text" sx={{ p: 0, minWidth: 30 }} onClick={() => { setBatchLimitValue(currentBatchLimit); setIsBatchModalOpen(true); }}>Modifier</Button>
                     </Box>
                 </Box>
+
+                <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between", alignItems: "center", bgcolor: globalSettings?.isPaused ? "error.light" : "success.light", p: 2, borderRadius: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: globalSettings?.isPaused ? "error.dark" : "success.dark" }}>
+                        {globalSettings?.isPaused ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+                        <Typography variant="body2" fontWeight="bold">
+                            {globalSettings?.isPaused ? "Envois en pause" : "Envois actifs"}
+                        </Typography>
+                    </Box>
+                    <Button
+                        size="small"
+                        variant={globalSettings?.isPaused ? "contained" : "outlined"}
+                        color={globalSettings?.isPaused ? "success" : "error"}
+                        onClick={() => setIsPauseModalOpen(true)}
+                        sx={{ bgcolor: globalSettings?.isPaused ? "success.main" : "transparent" }}
+                    >
+                        {globalSettings?.isPaused ? "Reprendre" : "Mettre en pause"}
+                    </Button>
+                </Box>
             </Box>
+
+            {/* Pause Modal */}
+            <Modal
+                open={isPauseModalOpen}
+                onClose={() => setIsPauseModalOpen(false)}
+            >
+                <Box sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: 400,
+                    bgcolor: "background.paper",
+                    borderRadius: 3,
+                    boxShadow: 24,
+                    p: 4,
+                }}>
+                    <Typography variant="h6" fontWeight="bold" mb={2}>
+                        {globalSettings?.isPaused ? "Reprendre les envois ?" : "Mettre en pause les envois ?"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" mb={3}>
+                        {globalSettings?.isPaused
+                            ? "Ceci relancera l'envoi de masse de toutes vos campagnes en cours selon le rythme configuré."
+                            : "Ceci suspendra temporairement l'envoi de toutes vos campagnes en cours. Elles reprendront quand vous désactiverez la pause."}
+                    </Typography>
+
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                        <Button variant="text" onClick={() => setIsPauseModalOpen(false)}>Annuler</Button>
+                        <Button
+                            variant="contained"
+                            color={globalSettings?.isPaused ? "success" : "error"}
+                            disabled={isUpdatingSettings}
+                            onClick={async () => {
+                                await updateSettings({ isPaused: !globalSettings?.isPaused }).unwrap();
+                                setIsPauseModalOpen(false);
+                            }}
+                        >
+                            Confirmer
+                        </Button>
+                    </Box>
+                </Box>
+            </Modal>
 
             {/* Batch Size Edit Modal */}
             <Modal

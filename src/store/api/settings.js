@@ -11,12 +11,12 @@ export const settingsApi = api.injectEndpoints({
             providesTags: ["GlobalSettings"],
         }),
         updateGlobalSettings: build.mutation({
-            query: ({ batchLimit }) => {
+            query: ({ batchLimit, isPaused }) => {
                 return {
                     method: "POST",
                     url: `/settings/update`,
                     headers: {},
-                    body: { batchLimit },
+                    body: { batchLimit, isPaused },
                 };
             },
             invalidatesTags: ["GlobalSettings"],

@@ -14,6 +14,5 @@ export const api = createApi({
 	keepUnusedDataFor: 0.001,
 
 	endpoints: () => ({}),
-	reducerPath: "api",
-	tagTypes: ["", "TestMailHistory", "GlobalSettings"],
+	tagTypes: ["", "TestMailHistory", "GlobalSettings", "HistoryStats", "EmailsByStatus"],
 });
