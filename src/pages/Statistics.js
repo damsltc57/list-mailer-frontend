@@ -530,9 +530,9 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
 
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     {[
-                        { label: "Par minute", value: (currentBatchLimit / 10).toFixed(1), total: 10 },
-                        { label: "Par heure", value: currentBatchLimit * 6, total: 300 },
-                        { label: "Par jour", value: currentBatchLimit * 6 * 24, total: 7200 },
+                        { label: "Par minute", value: (currentBatchLimit / (globalSettings?.cronIntervalMinutes || 10)).toFixed(1), total: 10 },
+                        { label: "Par heure", value: (currentBatchLimit * (60 / (globalSettings?.cronIntervalMinutes || 10))).toFixed(0), total: 300 },
+                        { label: "Par jour", value: (currentBatchLimit * (60 / (globalSettings?.cronIntervalMinutes || 10)) * 24).toFixed(0), total: 7200 },
                     ].map((item, index) => (
                         <Box key={index}>
                             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
@@ -563,7 +563,7 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
                 <Box sx={{ mt: 3, textAlign: "center", bgcolor: "grey.50", p: 2, borderRadius: 2, border: "1px dashed", borderColor: "divider" }}>
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}>
                         <Typography variant="caption" color="textSecondary">
-                            Rythme : <strong>{currentBatchLimit} emails</strong> toutes les <strong>10 minutes</strong>.
+                            Rythme : <strong>{currentBatchLimit} emails</strong> toutes les <strong>{globalSettings?.cronIntervalMinutes || 10} minutes</strong>.
                         </Typography>
                         <Button size="small" variant="text" sx={{ p: 0, minWidth: 30 }} onClick={() => { setBatchLimitValue(currentBatchLimit); setIsBatchModalOpen(true); }}>Modifier</Button>
                     </Box>
@@ -605,7 +605,7 @@ const RightSidebar = ({ statsData, startDate, endDate, setStartDate, setEndDate 
                             value={batchLimitValue}
                             onChange={(e) => setBatchLimitValue(e.target.value)}
                             InputProps={{ inputProps: { min: 1 } }}
-                            helperText={`Rythme total: ${(batchLimitValue || currentBatchLimit) * 6} emails par heure.`}
+                            helperText={`Rythme total: ${((batchLimitValue || currentBatchLimit) * (60 / (globalSettings?.cronIntervalMinutes || 10))).toFixed(0)} emails par heure.`}
                         />
                         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
                             <Button variant="text" onClick={() => setIsBatchModalOpen(false)}>Annuler</Button>
@@ -635,8 +635,9 @@ const Statistics = () => {
     const handleClose = () => setOpenModalItem(null);
 
     const currentBatchLimit = globalSettings?.batchLimit || 5;
+    const cronInterval = globalSettings?.cronIntervalMinutes || 10;
     const pendingCount = statsData?.pendingEmails || 0;
-    const remainingTotalMinutes = Math.ceil((pendingCount / currentBatchLimit) * 10);
+    const remainingTotalMinutes = Math.ceil((pendingCount / currentBatchLimit) * cronInterval);
     const remainingHours = Math.floor(remainingTotalMinutes / 60);
     const remainingMins = remainingTotalMinutes % 60;
 
@@ -672,7 +673,7 @@ const Statistics = () => {
                         />
                         <HeaderStatChip
                             title="Estim. Journalière"
-                            value={`${currentBatchLimit * 6 * 24} emails`}
+                            value={`${(currentBatchLimit * (60 / cronInterval) * 24).toFixed(0)} emails`}
                             icon={<SpeedIcon />}
                             color="info"
                         />

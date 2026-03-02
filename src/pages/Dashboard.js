@@ -222,10 +222,10 @@ const Dashboard = () => {
                         </Grid>
                         <Grid item xs={6}>
                             <HeaderStatChip
-                                title="Emails en erreur"
-                                value={statsData?.errorEmails || 0}
-                                icon={<WarningAmberIcon />}
-                                color="error"
+                                title="Emails en Attente"
+                                value={statsData?.pendingEmails || 0}
+                                icon={<AutorenewIcon />}
+                                color="warning"
                                 onClick={() => navigate("/statistiques")}
                             />
                         </Grid>
