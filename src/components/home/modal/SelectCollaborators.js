@@ -10,7 +10,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { Checkbox, FormGroup } from "@mui/material";
+import { Checkbox, Chip, FormGroup, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	addSelectedCollaborator,
@@ -33,10 +33,20 @@ function ConfirmationDialogRaw(props) {
 			<DialogTitle>Collaborateurs</DialogTitle>
 			<DialogContent dividers>
 				<FormGroup ref={radioGroupRef} aria-label="ringtone" name="ringtone">
-					{contact?.collaborators?.map((option) => (
+					{contact?.collaborators
+						?.filter((option) => Boolean(option.email))
+						.map((option) => (
 						<FormControlLabel
 							value={option}
-							key={option.email}
+							key={option.id}
+							sx={{
+								mx: 0,
+								px: 1,
+								py: 0.75,
+								borderRadius: 1,
+								"&:hover": { bgcolor: "action.hover" },
+								alignItems: "flex-start",
+							}}
 							control={
 								<Checkbox
 									onChange={(data) => {
@@ -62,14 +72,15 @@ function ConfirmationDialogRaw(props) {
 								/>
 							}
 							label={
-								option.firstName +
-								" " +
-								option.lastName +
-								" - " +
-								option.email +
-								" - (" +
-								option.position +
-								")"
+								<Box sx={{ display: "flex", flexDirection: "column", gap: 0.25, pt: 0.25 }}>
+									<Typography variant="body2" fontWeight={700}>
+										{`${option.firstName} ${option.lastName}`}
+									</Typography>
+									<Typography variant="caption" color="text.secondary">
+										{option.email}
+									</Typography>
+									{option.position ? <Chip size="small" label={option.position} sx={{ width: "fit-content" }} /> : null}
+								</Box>
 							}
 						/>
 					))}

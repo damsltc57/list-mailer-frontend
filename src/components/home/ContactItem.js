@@ -38,7 +38,7 @@ export default function ContactsDataGrid({ contacts }) {
 			headerName: "Emails séléctionnés",
 			width: 300,
 			renderCell: (params) => {
-				if (!params.row?.collaborators?.length) return null;
+				if (!params.row?.collaborators?.some((item) => Boolean(item?.email))) return null;
 				return (
 					<strong>
 						<Button
@@ -60,7 +60,14 @@ export default function ContactsDataGrid({ contacts }) {
 			headerName: "Tous les emails",
 			width: 240,
 			renderCell: (params) => {
-				return <strong>{params.row.collaborators?.map((item) => item.email).join(", ")}</strong>;
+				return (
+					<strong>
+						{params.row.collaborators
+							?.map((item) => item.email)
+							.filter((email) => Boolean(email))
+							.join(", ")}
+					</strong>
+				);
 			},
 		},
 	];
