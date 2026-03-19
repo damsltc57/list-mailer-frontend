@@ -117,10 +117,10 @@ export const contactApi = api.injectEndpoints({
 		getContactByIds: build.query({
 			query: ({ ids }) => {
 				return {
-					method: "GET",
+					method: "POST",
 					url: `/contact/ids`,
 					headers: {},
-					params: {
+					body: {
 						ids,
 					},
 				};

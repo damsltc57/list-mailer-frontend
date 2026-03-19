@@ -34,7 +34,9 @@ const GridPreviewFinalSelectedContacts = () => {
 			headerName: "Emails sélectionnés",
 			width: 300,
 			renderCell: (params) => {
-				if (!params.row?.collaborators?.length) return <strong>Email par défaut sélectionné</strong>;
+				if (!selectedCollaborators?.[params.row.id]?.collaborators?.length) {
+					return <strong>Email par défaut sélectionné</strong>;
+				}
 				return (
 					<strong>
 						{selectedCollaborators?.[params.row.id]?.collaborators?.map((item) => item.email).join(", ")}
@@ -58,8 +60,8 @@ const GridPreviewFinalSelectedContacts = () => {
 						Retirer
 					</Button>
 				);
-			}
-		}
+			},
+		},
 	];
 
 	return (
