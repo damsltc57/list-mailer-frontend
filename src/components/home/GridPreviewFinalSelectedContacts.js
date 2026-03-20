@@ -1,12 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	addSelectedContact,
-	getCollaborators,
-	getSelectedContacts,
-	removeSelectedContact,
-} from "../../store/reducers/contactSlice";
-import { Grid, Typography, Button, Paper, Box } from "@mui/material";
+import { getCollaborators, getSelectedContacts, removeSelectedContact } from "../../store/reducers/contactSlice";
+import { Typography, Button, Paper, Box, CircularProgress, Alert } from "@mui/material";
 import { useGetContactByIdsQuery } from "../../store/api/contact";
 import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,7 +15,7 @@ const GridPreviewFinalSelectedContacts = () => {
 		dispatch(removeSelectedContact(contact));
 	};
 
-	const { data } = useGetContactByIdsQuery({
+	const { data, isLoading, isFetching, isError, error } = useGetContactByIdsQuery({
 		ids: selectedContacts,
 	});
 
@@ -67,18 +62,56 @@ const GridPreviewFinalSelectedContacts = () => {
 	return (
 		<Paper sx={{ height: "auto", width: "100%", marginTop: 2 }}>
 			<Box sx={{ height: "60vh" }}>
-				<DataGrid
-					rows={data || []}
-					columns={leafColumns}
-					disableRowSelectionOnClick
-					hideFooterSelectedRowCount
-					slotProps={{
-						toolbar: {
-							showQuickFilter: true,
-							quickFilterProps: { debounceMs: 250 },
-						},
-					}}
-				/>
+				{(isLoading || isFetching) && (
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							justifyContent: "center",
+							height: "100%",
+							gap: 1,
+						}}
+					>
+						<CircularProgress size={28} />
+						<Typography variant="body2">Chargement des contacts...</Typography>
+					</Box>
+				)}
+				{isError && (
+					<Box sx={{ p: 2 }}>
+						<Alert severity="error">Erreur lors du chargement des contacts</Alert>
+						<Box
+							component="pre"
+							sx={{
+								mt: 1,
+								mb: 0,
+								p: 1.5,
+								borderRadius: 1,
+								backgroundColor: "#f7f7f7",
+								overflow: "auto",
+								fontSize: "0.75rem",
+							}}
+						>
+							{JSON.stringify(error, null, 2)}
+						</Box>
+					</Box>
+				)}
+				{!isError && (
+					<DataGrid
+						rows={data || []}
+						columns={leafColumns}
+						disableRowSelectionOnClick
+						hideFooterSelectedRowCount
+						loading={isLoading || isFetching}
+						slotProps={{
+							toolbar: {
+								showQuickFilter: true,
+								quickFilterProps: { debounceMs: 250 },
+							},
+						}}
+						sx={{ height: "100%" }}
+					/>
+				)}
 			</Box>
 		</Paper>
 	);
